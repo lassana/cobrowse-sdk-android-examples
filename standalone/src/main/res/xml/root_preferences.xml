@@ -1,0 +1,22 @@
+<PreferenceScreen xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <PreferenceCategory app:title="@string/fragment_settings_title_license">
+
+        <EditTextPreference
+            app:key="v1_cobrowse_license"
+            app:title="@string/fragment_settings_pref_license"
+            app:useSimpleSummaryProvider="true" />
+
+    </PreferenceCategory>
+
+    <PreferenceCategory app:title="@string/fragment_settings_title_screenshare">
+
+        <SwitchPreferenceCompat
+            app:key="v1_cobrowse_hide_session_controls"
+            app:summaryOff="@string/fragment_settings_pref_hide_session_controls_off"
+            app:summaryOn="@string/fragment_settings_pref_hide_session_controls_on"
+            app:title="@string/fragment_settings_pref_hide_session_controls" />
+
+    </PreferenceCategory>
+
+</PreferenceScreen>

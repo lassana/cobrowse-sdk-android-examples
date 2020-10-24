@@ -1,0 +1,28 @@
+<resources>
+    <string name="app_name">Cobrowse.io Standalone</string>
+
+    <!-- Main acitivity -->
+    <string name="activity_main_title">Cobrowse.io Standalone</string>
+    <string name="activity_main_navigation_drawer_open">Open navigation drawer</string>
+    <string name="activity_main_navigation_drawer_close">Close navigation drawer</string>
+    <string name="activity_main_nav_header_title">Cobrowse.io Standalone</string>
+
+    <!-- Flyout menu -->
+    <string name="activity_main_menu_home">Home</string>
+    <string name="activity_main_menu_settings">Settings</string>
+
+    <!-- Preferences -->
+
+    <string name="fragment_settings_title_license">Cobrowse.io license</string>
+    <string name="fragment_settings_pref_license">License key</string>
+    <string name="fragment_settings_title_screenshare">Screensharing</string>
+    <string name="fragment_settings_pref_hide_session_controls_off">Cobrowse.io has visual indication of a session</string>
+    <string name="fragment_settings_pref_hide_session_controls_on">No session controls or other visual indication of a session are shown</string>
+    <string name="fragment_settings_pref_hide_session_controls">Hide session controls</string>
+    <string name="fragment_home_button_6_digits_code">Show 6 Digits Code</string>
+    <string name="fragment_home_button_open_camera">Open Camera</string>
+    <string name="fragment_camera_title">Camera</string>
+    <string name="fragment_camera_error_permissions_not_granter">Permissions not granted by the user.</string>
+
+
+</resources>

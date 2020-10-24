@@ -1,0 +1,2 @@
+include ':standalone'
+rootProject.name = "Cobrowse.io Standalone"

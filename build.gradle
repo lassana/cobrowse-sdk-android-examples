@@ -1,0 +1,56 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+buildscript {
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath "com.android.tools.build:gradle:4.1.0"
+        classpath 'com.google.gms:google-services:4.3.4'
+        classpath "androidx.navigation:navigation-safe-args-gradle-plugin:2.3.4"
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+        maven { url "https://jitpack.io" }
+    }
+
+    afterEvaluate { Project project ->
+        def propsFile = project.file('standalone.jks.properties')
+
+        println 'propsFile.exists() ' + propsFile.exists()
+        println 'project.hasProperty("android") ' + project.hasProperty("android")
+        println 'project.getProperties() ' + project.getProperties()
+
+        if (propsFile.exists() && project.hasProperty("android")) {
+            def props = new Properties()
+            props.load(new FileInputStream(propsFile))
+
+            android {
+                signingConfigs {
+                    release {
+                        keyAlias props['keyAlias']
+                        keyPassword props['keyPassword']
+                        storeFile project.file(props['storeFile'])
+                        storePassword props['storePassword']
+                    }
+                }
+                buildTypes {
+                    release {
+                        signingConfig signingConfigs.release
+                    }
+                    debug {
+                        signingConfig signingConfigs.release
+                    }
+                }
+            }
+        }
+    }
+}
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
