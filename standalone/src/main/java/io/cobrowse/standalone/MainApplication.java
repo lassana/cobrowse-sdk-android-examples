@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.multidex.MultiDexApplication;
 import androidx.preference.PreferenceManager;
 
 import java.util.ArrayList;
@@ -19,7 +20,7 @@ import java.util.List;
 import io.cobrowse.CobrowseIO;
 import io.cobrowse.Session;
 
-public class MainApplication extends Application
+public class MainApplication extends MultiDexApplication
         implements CobrowseIO.SessionControlsDelegate,
                    SharedPreferences.OnSharedPreferenceChangeListener,
                    Application.ActivityLifecycleCallbacks {
