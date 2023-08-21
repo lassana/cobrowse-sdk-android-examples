@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.app.Application;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -13,6 +14,9 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.multidex.MultiDexApplication;
 import androidx.preference.PreferenceManager;
+
+import com.google.firebase.FirebaseApp;
+import com.google.firebase.iid.FirebaseInstanceId;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,6 +29,7 @@ public class MainApplication extends MultiDexApplication
                    SharedPreferences.OnSharedPreferenceChangeListener,
                    Application.ActivityLifecycleCallbacks {
 
+    private static final String TAG = "MainApplication";
     private final List<Activity> createdActivities = new ArrayList<>();
 
     @Override
@@ -39,15 +44,23 @@ public class MainApplication extends MultiDexApplication
 
         CobrowseIO.instance().setDelegate(this);
 
-        String license = CobrowsePreferences.getLicense(this);
-        CobrowseIO.instance().license(license);
-        CobrowseIO.instance().start(this);
+        CobrowseIO.instance().api(CobrowsePreferences.getApi(this));
+        CobrowseIO.instance().license(CobrowsePreferences.getLicense(this));
+        CobrowseIO.instance().start();
+
+        if (FirebaseApp.getApps(this).size() > 0) {
+            FirebaseInstanceId.getInstance().getInstanceId().addOnSuccessListener(instanceIdResult
+                    -> CobrowseIO.instance().setDeviceToken(MainApplication.this, instanceIdResult.getToken()));
+        } else {
+            Log.e(TAG, "Firebase app is not initialized. Did you copy your `google-services.json` file?");
+        }
     }
 
-    private void updateCobrowseLicense() {
+    private void updateCobrowseConfiguration() {
         CobrowseIO.instance().stop();
+        CobrowseIO.instance().api(CobrowsePreferences.getApi(this));
         CobrowseIO.instance().license(CobrowsePreferences.getLicense(this));
-        CobrowseIO.instance().start(this);
+        CobrowseIO.instance().start();
     }
 
     private void updateCobrowseSessionControls() {
@@ -126,8 +139,9 @@ public class MainApplication extends MultiDexApplication
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         switch (key) {
+            case CobrowsePreferences.KEY_API:
             case CobrowsePreferences.KEY_LICENSE:
-                updateCobrowseLicense();
+                updateCobrowseConfiguration();
                 break;
             case CobrowsePreferences.KEY_HIDE_SESSION_CONTOLS:
                 updateCobrowseSessionControls();

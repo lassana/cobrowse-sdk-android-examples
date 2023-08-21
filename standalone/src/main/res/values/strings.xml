@@ -13,7 +13,8 @@
 
     <!-- Preferences -->
 
-    <string name="fragment_settings_title_license">Cobrowse.io license</string>
+    <string name="fragment_settings_title_cobrowse">Cobrowse.io configuration</string>
+    <string name="fragment_settings_pref_api">API endpoint</string>
     <string name="fragment_settings_pref_license">License key</string>
     <string name="fragment_settings_title_screenshare">Screensharing</string>
     <string name="fragment_settings_pref_hide_session_controls_off">Cobrowse.io has visual indication of a session</string>
@@ -23,6 +24,6 @@
     <string name="fragment_home_button_open_camera">Open Camera</string>
     <string name="fragment_camera_title">Camera</string>
     <string name="fragment_camera_error_permissions_not_granter">Permissions not granted by the user.</string>
-
+    <string name="fragment_home_button_open_notification_permissions">Open Notification Permissions</string>
 
 </resources>
