@@ -38,12 +38,14 @@ class LoginActivity : AppCompatActivity() {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
                 menuInflater.inflate(R.menu.menu_login, menu)
                 this@LoginActivity.menu = menu
+                updateUiWithSession(loginViewModel.cobrowseDelegate.current.value)
             }
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 if (menuItem.itemId == R.id.end_cobrowse_session) {
                     loginViewModel.endCobrowseSession()
+                    return true
                 }
-                return true
+                return false
             }
         })
 
@@ -118,7 +120,7 @@ class LoginActivity : AppCompatActivity() {
         }
 
         loginViewModel.cobrowseDelegate.current.observe(this@LoginActivity, Observer {
-            menu?.findItem(R.id.end_cobrowse_session)?.isVisible = it?.isActive == true
+            updateUiWithSession(it)
         })
     }
 
@@ -128,6 +130,12 @@ class LoginActivity : AppCompatActivity() {
 
     private fun showLoginFailed(@StringRes errorString: Int) {
         Toast.makeText(applicationContext, errorString, Toast.LENGTH_SHORT).show()
+    }
+
+    private fun updateUiWithSession(session: io.cobrowse.Session?) {
+        menu?.findItem(R.id.end_cobrowse_session).let {
+            it?.isVisible = session?.isActive == true
+        }
     }
 }
 

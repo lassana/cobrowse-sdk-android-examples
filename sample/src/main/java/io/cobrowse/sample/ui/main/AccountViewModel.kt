@@ -2,12 +2,12 @@ package io.cobrowse.sample.ui.main
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import io.cobrowse.sample.R
 import io.cobrowse.sample.data.LoginRepository
 import io.cobrowse.sample.data.model.LoggedInUser
+import io.cobrowse.sample.ui.BaseViewModel
 
-class AccountViewModel(private val loginRepository: LoginRepository) : ViewModel() {
+class AccountViewModel(private val loginRepository: LoginRepository) : BaseViewModel() {
 
     private val _logoutResult = MutableLiveData<LogoutResult>()
     val logoutResult: LiveData<LogoutResult> = _logoutResult
@@ -22,5 +22,4 @@ class AccountViewModel(private val loginRepository: LoginRepository) : ViewModel
             _logoutResult.value = LogoutResult(error = R.string.logout_failed)
         }
     }
-
 }

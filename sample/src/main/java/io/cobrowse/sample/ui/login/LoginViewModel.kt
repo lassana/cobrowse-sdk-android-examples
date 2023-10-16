@@ -2,22 +2,18 @@ package io.cobrowse.sample.ui.login
 
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.ViewModel
 import io.cobrowse.sample.R
-import io.cobrowse.sample.data.CobrowseSessionDelegate
 import io.cobrowse.sample.data.LoginRepository
 import io.cobrowse.sample.data.Result
+import io.cobrowse.sample.ui.BaseViewModel
 
-class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel() {
+class LoginViewModel(private val loginRepository: LoginRepository) : BaseViewModel() {
 
     private val _loginForm = MutableLiveData<LoginFormState>()
     val loginFormState: LiveData<LoginFormState> = _loginForm
 
     private val _loginResult = MutableLiveData<LoginResult>()
     val loginResult: LiveData<LoginResult> = _loginResult
-
-    val cobrowseDelegate: CobrowseSessionDelegate
-        get() = CobrowseSessionDelegate.getInstance()
 
     fun login(username: String, password: String) {
         // can be launched in a separate asynchronous job
@@ -49,9 +45,5 @@ class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel()
     // A placeholder password validation check
     private fun isPasswordValid(password: String): Boolean {
         return password.isNotEmpty()
-    }
-
-    fun endCobrowseSession() {
-        cobrowseDelegate.current.value?.end(null)
     }
 }
