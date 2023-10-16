@@ -17,12 +17,13 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.MenuProvider
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import io.cobrowse.CobrowseIO
 import io.cobrowse.sample.R
 import io.cobrowse.sample.databinding.ActivityLoginBinding
 import io.cobrowse.sample.ui.CobrowseViewModelFactory
 import io.cobrowse.sample.ui.main.MainActivity
 
-class LoginActivity : AppCompatActivity() {
+class LoginActivity : AppCompatActivity(), CobrowseIO.Redacted {
 
     private lateinit var loginViewModel: LoginViewModel
     private lateinit var binding: ActivityLoginBinding
@@ -136,6 +137,13 @@ class LoginActivity : AppCompatActivity() {
         menu?.findItem(R.id.end_cobrowse_session).let {
             it?.isVisible = session?.isActive == true
         }
+    }
+
+    override fun redactedViews(): MutableList<View> {
+        return arrayListOf(
+            findViewById(R.id.username),
+            findViewById(R.id.password),
+        )
     }
 }
 
