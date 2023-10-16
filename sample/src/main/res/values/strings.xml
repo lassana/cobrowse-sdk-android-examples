@@ -13,4 +13,7 @@
     <string name="log_out">Log out</string>
     <string name="logout_failed">Logout operation failed</string>
     <string name="goodbye">You have been logged out</string>
+    <string name="menu_item_account">Account</string>
+    <string name="login_welcome_secondary"><b>Note</b>\n<small>Any login details will work\ne.g. \"user\" / \"password\"</small></string>
+    <string name="fragment_account_title">Account</string>
 </resources>

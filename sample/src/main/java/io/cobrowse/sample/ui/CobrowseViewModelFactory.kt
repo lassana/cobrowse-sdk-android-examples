@@ -2,9 +2,10 @@ package io.cobrowse.sample.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import io.cobrowse.sample.data.LoginDataSource
 import io.cobrowse.sample.data.LoginRepository
 import io.cobrowse.sample.ui.login.LoginViewModel
+import io.cobrowse.sample.ui.main.AccountFragment
+import io.cobrowse.sample.ui.main.AccountViewModel
 import io.cobrowse.sample.ui.main.MainViewModel
 
 /**
@@ -26,6 +27,12 @@ class CobrowseViewModelFactory : ViewModelProvider.Factory {
                     loginRepository = LoginRepository.getInstance()
                 ) as T
             }
+            modelClass.isAssignableFrom(AccountViewModel::class.java) -> {
+                AccountViewModel(
+                    loginRepository = LoginRepository.getInstance()
+                ) as T
+            }
+
             else -> throw IllegalArgumentException("Unknown ViewModel class")
         }
     }

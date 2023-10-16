@@ -9,8 +9,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CobrowseioStandalone">
         <activity
-            android:name=".MainActivity"
-            android:exported="false" />
+            android:name=".ui.main.MainActivity"
+            android:exported="false"
+            android:theme="@style/Theme.CobrowseioStandalone.NoActionBar" />
         <activity
             android:name=".ui.login.LoginActivity"
             android:exported="true"

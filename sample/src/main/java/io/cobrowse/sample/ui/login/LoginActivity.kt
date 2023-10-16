@@ -13,10 +13,9 @@ import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.Toast
-import io.cobrowse.sample.MainActivity
+import io.cobrowse.sample.ui.main.MainActivity
 import io.cobrowse.sample.databinding.ActivityLoginBinding
 
-import io.cobrowse.sample.R
 import io.cobrowse.sample.ui.CobrowseViewModelFactory
 
 class LoginActivity : AppCompatActivity() {

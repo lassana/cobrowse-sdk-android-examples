@@ -7,14 +7,6 @@
     android:layout_height="match_parent"
     tools:context=".ui.main.MainFragment">
 
-    <Button
-        android:id="@+id/log_out"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/log_out"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent" />
+    <!-- TODO: finance chart -->
 
 </androidx.constraintlayout.widget.ConstraintLayout>
