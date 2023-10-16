@@ -16,4 +16,5 @@
     <string name="menu_item_account">Account</string>
     <string name="login_welcome_secondary"><b>Note</b>\n<small>Any login details will work\ne.g. \"user\" / \"password\"</small></string>
     <string name="fragment_account_title">Account</string>
+    <string name="end_cobrowse_session">Finish screensharing</string>
 </resources>

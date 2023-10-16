@@ -2,32 +2,50 @@ package io.cobrowse.sample.ui.login
 
 import android.app.Activity
 import android.content.Intent
-import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import android.os.Bundle
-import androidx.annotation.StringRes
-import androidx.appcompat.app.AppCompatActivity
 import android.text.Editable
 import android.text.TextWatcher
+import android.view.Menu
+import android.view.MenuInflater
+import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
 import android.widget.Toast
-import io.cobrowse.sample.ui.main.MainActivity
+import androidx.annotation.StringRes
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.MenuProvider
+import androidx.lifecycle.Observer
+import androidx.lifecycle.ViewModelProvider
+import io.cobrowse.sample.R
 import io.cobrowse.sample.databinding.ActivityLoginBinding
-
 import io.cobrowse.sample.ui.CobrowseViewModelFactory
+import io.cobrowse.sample.ui.main.MainActivity
 
 class LoginActivity : AppCompatActivity() {
 
     private lateinit var loginViewModel: LoginViewModel
     private lateinit var binding: ActivityLoginBinding
+    private var menu: Menu? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        addMenuProvider(object : MenuProvider {
+            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
+                menuInflater.inflate(R.menu.menu_login, menu)
+                this@LoginActivity.menu = menu
+            }
+            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
+                if (menuItem.itemId == R.id.end_cobrowse_session) {
+                    loginViewModel.endCobrowseSession()
+                }
+                return true
+            }
+        })
 
         val username = binding.username
         val password = binding.password
@@ -98,6 +116,10 @@ class LoginActivity : AppCompatActivity() {
                 loginViewModel.login(username.text.toString(), password.text.toString())
             }
         }
+
+        loginViewModel.cobrowseDelegate.current.observe(this@LoginActivity, Observer {
+            menu?.findItem(R.id.end_cobrowse_session)?.isVisible = it?.isActive == true
+        })
     }
 
     private fun updateUiWithUser(model: LoggedInUserView) {

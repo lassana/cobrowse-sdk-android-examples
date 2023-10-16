@@ -41,20 +41,10 @@ class LoginRepository(val dataSource: LoginDataSource) {
         this.user = loggedInUser
     }
 
-
-    /**
-     * Define a companion object, this allows us to add functions on the LoginRepository class.
-     */
     companion object {
-        /**
-         * INSTANCE will keep a reference to any repository returned via getInstance.
-         */
         @Volatile
         private var INSTANCE: LoginRepository? = null
 
-        /**
-         * Helper function to get the repository.
-         */
         fun getInstance(): LoginRepository {
             synchronized(this) {
                 var instance = INSTANCE
