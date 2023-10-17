@@ -140,10 +140,11 @@ class LoginActivity : AppCompatActivity(), CobrowseIO.Redacted {
     }
 
     override fun redactedViews(): MutableList<View> {
-        return arrayListOf(
+        return arrayListOf<View?>(
             findViewById(R.id.username),
-            findViewById(R.id.password),
-        )
+            findViewById(R.id.password))
+            .filterNotNull()
+            .toMutableList()
     }
 }
 
