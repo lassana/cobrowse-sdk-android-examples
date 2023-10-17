@@ -21,6 +21,8 @@
         android:id="@+id/logo_presentation_description"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:paddingLeft="@dimen/activity_horizontal_margin"
+        android:paddingRight="@dimen/activity_horizontal_margin"
         app:layout_constraintTop_toBottomOf="@id/logo_presentation"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

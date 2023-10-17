@@ -22,4 +22,25 @@
     <style name="Theme.CobrowseioStandalone.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="Theme.CobrowseioStandalone.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <style name="Theme.CobrowseioStandalone.Button" parent="ThemeOverlay.Material3.Button" >
+        <item name="android:textAllCaps">false</item>
+        <!--
+        <item name="android:textColor">@color/secondaryTextColor</item>
+        <item name="colorButtonNormal">#020e39</item>
+        <item name="android:background">@drawable/button_background</item>
+        -->
+    </style>
+
+    <style name="Theme.CobrowseioStandalone.Button.Alternative" parent="Theme.CobrowseioStandalone.Button">
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textColor">@color/primaryColor</item>
+        <item name="android:backgroundTint">@color/accentLightColor</item>
+    </style>
+    <style name="Theme.CobrowseioStandalone.Button.NoBackground" parent="Theme.CobrowseioStandalone.Button">
+        <item name="android:textAllCaps">false</item>
+        <item name="android:textColor">@color/primaryColor</item>
+        <item name="android:backgroundTint">@null</item>
+        <item name="android:background">?attr/selectableItemBackground</item>
+    </style>
 </resources>

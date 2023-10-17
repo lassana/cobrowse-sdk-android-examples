@@ -4,9 +4,9 @@
     <color name="primaryDarkColor">#411d98</color>
     <color name="primaryLightColor">#d1c4e9</color>
 
-    <color name="accentColor">#3CC56E</color>
-    <color name="accentDarkColor">#20683A</color>
-    <color name="accentLightColor">#AAE8C1</color>
+    <color name="accentColor">#cbee29</color>
+    <color name="accentDarkColor">#90ad0d</color>
+    <color name="accentLightColor">#E0F57F</color>
 
     <color name="primaryTextColor">#2b2b2b</color>
     <color name="secondaryTextColor">#ffffff</color>
