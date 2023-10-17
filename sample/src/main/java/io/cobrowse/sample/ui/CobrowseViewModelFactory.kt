@@ -3,6 +3,8 @@ package io.cobrowse.sample.ui
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
 import io.cobrowse.sample.data.LoginRepository
+import io.cobrowse.sample.data.TransactionsDataSource
+import io.cobrowse.sample.data.TransactionsRepository
 import io.cobrowse.sample.ui.login.LoginViewModel
 import io.cobrowse.sample.ui.main.AccountFragment
 import io.cobrowse.sample.ui.main.AccountViewModel
@@ -24,7 +26,9 @@ class CobrowseViewModelFactory : ViewModelProvider.Factory {
                 ) as T
             }
             modelClass.isAssignableFrom(MainViewModel::class.java) -> {
-                MainViewModel() as T
+                MainViewModel(repository = TransactionsRepository(
+                    dataSource = TransactionsDataSource()
+                )) as T
             }
             modelClass.isAssignableFrom(AccountViewModel::class.java) -> {
                 AccountViewModel(
