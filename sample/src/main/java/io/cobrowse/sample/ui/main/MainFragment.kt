@@ -10,7 +10,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.core.content.ContextCompat.getDrawable
-import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
@@ -18,7 +17,6 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation.findNavController
-import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
@@ -27,8 +25,6 @@ import io.cobrowse.sample.R
 import io.cobrowse.sample.data.model.Transaction
 import io.cobrowse.sample.databinding.FragmentMainBinding
 import io.cobrowse.sample.ui.CobrowseViewModelFactory
-import kotlin.math.roundToInt
-
 
 class MainFragment : Fragment() {
 
@@ -50,6 +46,9 @@ class MainFragment : Fragment() {
         })
         viewModel.transactionsResult.observe(this@MainFragment, Observer {
             updateChart(it)
+        })
+        viewModel.balanceResult.observe(this@MainFragment, Observer {
+            updateBalance(it)
         })
     }
 
@@ -90,10 +89,17 @@ class MainFragment : Fragment() {
             }
         }, viewLifecycleOwner, Lifecycle.State.RESUMED)
 
-        if (viewModel.transactionsResult.value != null) {
+        if (viewModel.transactionsResult.isInitialized
+            && viewModel.transactionsResult.value != null) {
             updateChart(viewModel.transactionsResult.value!!)
         } else {
             viewModel.loadTransactions()
+        }
+
+        if (viewModel.balanceResult.isInitialized) {
+            updateBalance(viewModel.balanceResult.value)
+        } else {
+            viewModel.loadBalance()
         }
     }
 
@@ -101,6 +107,11 @@ class MainFragment : Fragment() {
         menu?.findItem(R.id.end_cobrowse_session).let {
             it?.isVisible = session?.isActive == true
         }
+    }
+
+    private fun updateBalance(balance: Double?) {
+        if (balance != null)
+            binding.textviewBalance.text = getString(R.string.transaction_amount, balance)
     }
 
     private fun updateChart(transactions: List<Transaction>) {
@@ -125,7 +136,7 @@ class MainFragment : Fragment() {
             pieEntries.add(PieEntry(transaction.value.toFloat(), icon))
         }
 
-        total.text = getString(R.string.total_spent_amount, transactionsDictionary.values.sum().roundToInt())
+        total.text = getString(R.string.transaction_amount, transactionsDictionary.values.sum())
 
         val pieDataSet = PieDataSet(pieEntries, label)
         pieDataSet.valueTextSize = 12f
