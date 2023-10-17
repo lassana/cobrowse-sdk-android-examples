@@ -15,11 +15,11 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.Navigation.findNavController
 import io.cobrowse.sample.R
 import io.cobrowse.sample.databinding.FragmentAccountBinding
 import io.cobrowse.sample.ui.CobrowseViewModelFactory
 import io.cobrowse.sample.ui.login.LoginActivity
-
 
 class AccountFragment : Fragment()  {
     companion object {
@@ -83,6 +83,12 @@ class AccountFragment : Fragment()  {
         val getSessionCode = binding.getSessionCode
         getSessionCode.setOnClickListener {
             viewModel.requestSessionCode()
+        }
+
+        val agentPresent = binding.agentPresentMode
+        agentPresent.setOnClickListener {
+            val navController = findNavController(binding.root)
+            navController.navigate(R.id.action_accountFragment_to_agentPresentFragment)
         }
 
         return binding.root

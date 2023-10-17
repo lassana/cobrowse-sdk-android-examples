@@ -17,4 +17,7 @@
     <string name="login_welcome_secondary"><b>Note</b>\n<small>Any login details will work\ne.g. \"user\" / \"password\"</small></string>
     <string name="fragment_account_title">Account</string>
     <string name="end_cobrowse_session">Finish screensharing</string>
+    <string name="agent_present_welcome">Please enter your present code</string>
+    <string name="fragment_agent_present_title">Agent Present</string>
+    <string name="agent_present_welcome_you_are_presenting">You are now presenting</string>
 </resources>
