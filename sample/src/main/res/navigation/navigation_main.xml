@@ -17,6 +17,9 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_mainFragment_to_transactionsFragment"
+            app:destination="@id/transactionsFragment" />
     </fragment>
 
     <fragment
@@ -38,5 +41,10 @@
         android:name="io.cobrowse.sample.ui.main.AgentPresentFragment"
         android:label="@string/fragment_agent_present_title"
         tools:layout="@layout/fragment_agent_present" />
+
+    <dialog
+        android:id="@+id/transactionsFragment"
+        android:name="io.cobrowse.sample.ui.main.TransactionsFragment"
+        tools:layout="@layout/fragment_transactions" />
 
 </navigation>

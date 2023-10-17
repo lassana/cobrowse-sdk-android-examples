@@ -12,6 +12,8 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
+        <item name="android:windowBackground">#F8F7FE</item>
+        <item name="bottomSheetStyle">@style/Theme.CobrowseioStandalone.BottomSheet</item>
     </style>
 
     <style name="Theme.CobrowseioStandalone.NoActionBar">
@@ -43,4 +45,17 @@
         <item name="android:backgroundTint">@null</item>
         <item name="android:background">?attr/selectableItemBackground</item>
     </style>
+
+    <style name="Theme.CobrowseioStandalone.BottomSheet" parent="Widget.MaterialComponents.BottomSheet">
+        <item name="shapeAppearanceOverlay">@style/Theme.CobrowseioStandalone.CustomShapeAppearanceOverlay</item>
+    </style>
+
+    <style name="Theme.CobrowseioStandalone.CustomShapeAppearanceOverlay" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopRight">16dp</item>
+        <item name="cornerSizeTopLeft">16dp</item>
+        <item name="cornerSizeBottomRight">0dp</item>
+        <item name="cornerSizeBottomLeft">0dp</item>
+    </style>
+
 </resources>

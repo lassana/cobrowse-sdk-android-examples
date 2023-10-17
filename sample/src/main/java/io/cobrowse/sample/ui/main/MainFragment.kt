@@ -21,6 +21,7 @@ import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import io.cobrowse.sample.R
 import io.cobrowse.sample.data.model.Transaction
 import io.cobrowse.sample.databinding.FragmentMainBinding
@@ -79,15 +80,17 @@ class MainFragment : Fragment() {
                         true
                     }
                     R.id.accountFragment -> {
-                        val navController = findNavController(view)
-                        //return menuItem.onNavDestinationSelected(navController)
-                        navController.navigate(R.id.action_mainFragment_to_accountFragment)
+                        //return menuItem.onNavDestinationSelected(findNavController(view))
+                        findNavController(view).navigate(R.id.action_mainFragment_to_accountFragment)
                         true
                     }
                     else -> false
                 }
             }
         }, viewLifecycleOwner, Lifecycle.State.RESUMED)
+
+        val bottomSheetBehavior = BottomSheetBehavior.from(binding.transactionsBottomSheet)
+        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
 
         if (viewModel.transactionsResult.isInitialized
             && viewModel.transactionsResult.value != null) {

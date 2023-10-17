@@ -6,7 +6,6 @@ import io.cobrowse.sample.data.LoginRepository
 import io.cobrowse.sample.data.TransactionsDataSource
 import io.cobrowse.sample.data.TransactionsRepository
 import io.cobrowse.sample.ui.login.LoginViewModel
-import io.cobrowse.sample.ui.main.AccountFragment
 import io.cobrowse.sample.ui.main.AccountViewModel
 import io.cobrowse.sample.ui.main.AgentPresentViewModel
 import io.cobrowse.sample.ui.main.MainViewModel
