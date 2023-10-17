@@ -37,7 +37,7 @@
         app:layout_constraintTop_toBottomOf="@id/textview_total_spent"
         app:layout_constraintStart_toStartOf="@id/chart"
         app:layout_constraintEnd_toEndOf="@id/chart"
-        android:text="this month" />
+        android:text="@string/total_spent_amount_footer" />
 
     <TextView
         android:id="@+id/textview_total_spent_header"
@@ -46,6 +46,6 @@
         app:layout_constraintBottom_toTopOf="@id/textview_total_spent"
         app:layout_constraintStart_toStartOf="@id/chart"
         app:layout_constraintEnd_toEndOf="@id/chart"
-        android:text="Spent" />
+        android:text="@string/total_spent_amount_header" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

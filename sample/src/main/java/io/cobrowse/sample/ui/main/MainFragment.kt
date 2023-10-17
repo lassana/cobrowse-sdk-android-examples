@@ -1,5 +1,6 @@
 package io.cobrowse.sample.ui.main
 
+import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.Menu
@@ -8,6 +9,8 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.ContextCompat.getDrawable
+import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
@@ -15,6 +18,7 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation.findNavController
+import androidx.vectordrawable.graphics.drawable.VectorDrawableCompat
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
@@ -23,6 +27,7 @@ import io.cobrowse.sample.R
 import io.cobrowse.sample.data.model.Transaction
 import io.cobrowse.sample.databinding.FragmentMainBinding
 import io.cobrowse.sample.ui.CobrowseViewModelFactory
+import kotlin.math.roundToInt
 
 
 class MainFragment : Fragment() {
@@ -114,14 +119,13 @@ class MainFragment : Fragment() {
         val colors = ArrayList<Int>()
         for (transaction in transactionsDictionary) {
             colors.add(transaction.key.color)
-            pieEntries.add(PieEntry(transaction.value.toFloat(),
-                                    transaction.key.title
-                                    //getDrawable(requireContext(), transaction.key.icon)
-                                    ))
+
+            val icon = getDrawable(requireContext(), transaction.key.icon)
+            icon?.setTint(Color.WHITE)
+            pieEntries.add(PieEntry(transaction.value.toFloat(), icon))
         }
 
-        // TODO extract string resource
-        total.text = "$" + transactionsDictionary.values.sum()
+        total.text = getString(R.string.total_spent_amount, transactionsDictionary.values.sum().roundToInt())
 
         val pieDataSet = PieDataSet(pieEntries, label)
         pieDataSet.valueTextSize = 12f

@@ -56,7 +56,7 @@
         android:id="@+id/agent_present_mode"
         android:layout_width="220dp"
         android:layout_height="wrap_content"
-        android:text="Agent present mode"
+        android:text="@string/button_agent_present"
         app:layout_constraintBottom_toTopOf="@id/log_out"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"  />
@@ -65,7 +65,7 @@
         android:id="@+id/get_session_code"
         android:layout_width="220dp"
         android:layout_height="wrap_content"
-        android:text="Get session code"
+        android:text="@string/button_get_session_code"
         android:theme="@style/Theme.CobrowseioStandalone.Button"
         app:layout_constraintBottom_toTopOf="@id/agent_present_mode"
         app:layout_constraintEnd_toEndOf="parent"

@@ -1,12 +1,16 @@
 package io.cobrowse.sample.data.model
 
+import android.content.Context
 import android.graphics.Color
+import android.icu.text.MessageFormat
+import android.os.Build
 import io.cobrowse.sample.R
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
 data class Transaction(
     val title: String,
-    val subtitle: String,
     val amount: Double,
     val date: LocalDateTime,
     val category: Category) {
@@ -31,4 +35,20 @@ data class Transaction(
             }
         }
     }
+}
+
+fun Transaction.subtitle(context: Context): String {
+
+    fun getOrdinal(number: Int): String {
+        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+            val formatter = MessageFormat("{0,ordinal}", Locale.getDefault())
+            formatter.format(arrayOf(number))
+        } else {
+            number.toString()
+        }
+    }
+
+    return context.getString(R.string.transaction_detail_subtitle,
+        getOrdinal(date.dayOfMonth),
+        DateTimeFormatter.ofPattern("HH:mm").format(date))
 }

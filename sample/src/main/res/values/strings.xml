@@ -20,4 +20,10 @@
     <string name="agent_present_welcome">Please enter your present code</string>
     <string name="fragment_agent_present_title">Agent Present</string>
     <string name="agent_present_welcome_you_are_presenting">You are now presenting</string>
+    <string name="total_spent_amount">$ %1$d</string>
+    <string name="total_spent_amount_footer">this month</string>
+    <string name="total_spent_amount_header">Spent</string>
+    <string name="transaction_detail_subtitle">%1$s at %2$s</string>
+    <string name="button_agent_present">Agent present mode</string>
+    <string name="button_get_session_code">Get session code</string>
 </resources>

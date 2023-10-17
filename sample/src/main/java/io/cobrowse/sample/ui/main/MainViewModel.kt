@@ -14,5 +14,4 @@ class MainViewModel(private val repository: TransactionsRepository) : BaseViewMo
     fun loadTransactions() {
         _transactionsResult.value = repository.recentTransactions()
     }
-
 }
