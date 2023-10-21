@@ -5,6 +5,10 @@ import androidx.lifecycle.MutableLiveData
 import io.cobrowse.CobrowseIO
 import io.cobrowse.Session
 
+/**
+ * Global delegate of Cobrowse.io sessions. Stores the current session and provides a way
+ * to subscribe to session data updates.
+ */
 class CobrowseSessionDelegate : CobrowseIO.Delegate {
 
     private val _current = MutableLiveData<Session?>()

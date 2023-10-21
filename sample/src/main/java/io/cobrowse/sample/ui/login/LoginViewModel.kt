@@ -7,6 +7,9 @@ import io.cobrowse.sample.data.LoginRepository
 import io.cobrowse.sample.data.Result
 import io.cobrowse.sample.ui.BaseViewModel
 
+/**
+ * View-Model for the login form.
+ */
 class LoginViewModel(private val loginRepository: LoginRepository) : BaseViewModel() {
 
     private val _loginForm = MutableLiveData<LoginFormState>()

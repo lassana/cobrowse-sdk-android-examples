@@ -3,6 +3,10 @@ package io.cobrowse.sample.data
 import io.cobrowse.sample.data.model.Transaction
 import java.time.LocalDate
 
+/**
+ * Class that loads (actually randomly generates) user financial information from
+ * the provided data source.
+ */
 class TransactionsRepository(private val dataSource: TransactionsDataSource) {
     fun recentTransactions(): List<Transaction> {
         val currentDate = LocalDate.now()

@@ -8,6 +8,9 @@ import io.cobrowse.sample.data.LoginRepository
 import io.cobrowse.sample.data.model.LoggedInUser
 import io.cobrowse.sample.ui.BaseViewModel
 
+/**
+ * View-Model for [AccountFragment].
+ */
 class AccountViewModel(private val loginRepository: LoginRepository) : BaseViewModel() {
 
     private val _logoutResult = MutableLiveData<LogoutResult>()

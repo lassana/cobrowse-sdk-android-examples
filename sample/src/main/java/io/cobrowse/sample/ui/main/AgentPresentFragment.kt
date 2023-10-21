@@ -26,6 +26,10 @@ import io.cobrowse.sample.databinding.FragmentAgentPresentBinding
 import io.cobrowse.sample.ui.CobrowseViewModelFactory
 import io.cobrowse.sample.ui.login.afterTextChanged
 
+/**
+ * Fragment that implements Cobrowse.io Agent Present mode: a special mode when an agent
+ * can use this app to share their screen within a "reverse" screensharing session.
+ */
 class AgentPresentFragment : Fragment()  {
     companion object {
         fun newInstance() = AccountFragment()

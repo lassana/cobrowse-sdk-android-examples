@@ -7,6 +7,9 @@ import io.cobrowse.Session
 import io.cobrowse.sample.ui.BaseViewModel
 import java.lang.Error
 
+/**
+ * View-Model for [AgentPresentFragment].
+ */
 class AgentPresentViewModel : BaseViewModel() {
 
     private val _agentSessionResult = MutableLiveData<Pair<Error?, Session?>>()

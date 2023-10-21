@@ -4,6 +4,9 @@ import android.app.Application
 import io.cobrowse.CobrowseIO
 import io.cobrowse.sample.data.CobrowseSessionDelegate
 
+/**
+ * Android application class.
+ */
 class MainApplication : Application() {
 
     override fun onCreate() {

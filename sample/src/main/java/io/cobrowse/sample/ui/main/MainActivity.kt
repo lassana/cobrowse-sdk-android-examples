@@ -11,7 +11,9 @@ import androidx.navigation.ui.NavigationUI
 import io.cobrowse.CobrowseIO
 import io.cobrowse.sample.R
 
-
+/**
+ * Activity that hosts all fragments when user is logged in.
+ */
 class MainActivity : AppCompatActivity(), CobrowseIO.Redacted {
 
     private lateinit var navHostFragment: NavHostFragment

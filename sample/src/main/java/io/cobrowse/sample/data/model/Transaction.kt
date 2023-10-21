@@ -10,6 +10,9 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
+/**
+ * Data class that represents a single user financial transaction.
+ */
 data class Transaction(
     val title: String,
     val amount: Double,

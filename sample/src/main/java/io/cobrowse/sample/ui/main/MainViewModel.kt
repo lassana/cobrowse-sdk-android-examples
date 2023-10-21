@@ -6,6 +6,9 @@ import io.cobrowse.sample.data.TransactionsRepository
 import io.cobrowse.sample.data.model.Transaction
 import io.cobrowse.sample.ui.BaseViewModel
 
+/**
+ * View-Model for [MainFragment].
+ */
 class MainViewModel(private val repository: TransactionsRepository) : BaseViewModel() {
 
     private val _recentTransactionsResult = MutableLiveData<List<Transaction>>()

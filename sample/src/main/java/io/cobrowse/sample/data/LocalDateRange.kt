@@ -2,6 +2,9 @@ package io.cobrowse.sample.data
 
 import java.time.LocalDate
 
+/**
+ * [LocalDate] range class: a step is one day (24 hours).
+ */
 class LocalDateRange(override val start: LocalDate, override val endInclusive: LocalDate) :
     ClosedRange<LocalDate>, Iterable<LocalDate> {
     override fun iterator(): Iterator<LocalDate> {

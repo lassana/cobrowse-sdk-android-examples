@@ -23,6 +23,9 @@ import io.cobrowse.sample.databinding.ActivityLoginBinding
 import io.cobrowse.sample.ui.CobrowseViewModelFactory
 import io.cobrowse.sample.ui.main.MainActivity
 
+/**
+ * Activity with the login form.
+ */
 class LoginActivity : AppCompatActivity(), CobrowseIO.Redacted {
 
     private lateinit var loginViewModel: LoginViewModel

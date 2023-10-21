@@ -1,6 +1,5 @@
 package io.cobrowse.sample.ui.main
 
-import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup

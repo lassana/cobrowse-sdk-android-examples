@@ -22,6 +22,10 @@ import io.cobrowse.sample.databinding.FragmentAccountBinding
 import io.cobrowse.sample.ui.CobrowseViewModelFactory
 import io.cobrowse.sample.ui.login.LoginActivity
 
+/**
+ * Fragment that displays the information about user who is currently logged in, and provides
+ * navigation to [AgentPresentFragment].
+ */
 class AccountFragment : Fragment(), CobrowseIO.Redacted  {
     companion object {
         fun newInstance() = AccountFragment()

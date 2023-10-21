@@ -28,6 +28,10 @@ import io.cobrowse.sample.data.model.Transaction
 import io.cobrowse.sample.databinding.FragmentMainBinding
 import io.cobrowse.sample.ui.CobrowseViewModelFactory
 
+/**
+ * Fragment that displays the recent transactions statistics and also the list of transactions
+ * made in the past months.
+ */
 class MainFragment : Fragment(), CobrowseIO.Redacted {
 
     companion object {

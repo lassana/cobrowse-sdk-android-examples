@@ -11,8 +11,7 @@ import io.cobrowse.sample.ui.main.AgentPresentViewModel
 import io.cobrowse.sample.ui.main.MainViewModel
 
 /**
- * ViewModel provider factory to instantiate LoginViewModel.
- * Required given LoginViewModel has a non-empty constructor
+ * ViewModel provider factory to instantiate all View-Models uses within the app.
  */
 class CobrowseViewModelFactory : ViewModelProvider.Factory {
 

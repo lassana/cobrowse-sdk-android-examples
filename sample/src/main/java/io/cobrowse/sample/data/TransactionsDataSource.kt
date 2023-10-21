@@ -4,6 +4,9 @@ import io.cobrowse.sample.data.model.Transaction
 import java.io.IOException
 import java.time.LocalDateTime
 
+/**
+ * Class that loads (actually randomly generates) user financial transactions.
+ */
 class TransactionsDataSource {
     fun generate(count: Int,
                  between: LocalDateRange): Result<List<Transaction>> {
