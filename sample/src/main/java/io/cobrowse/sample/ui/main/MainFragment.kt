@@ -40,7 +40,6 @@ class MainFragment : Fragment(), CobrowseIO.Redacted {
 
     private lateinit var viewModel: MainViewModel
     private lateinit var binding: FragmentMainBinding
-    private var menu: Menu? = null
     private var isTransactionListPresented = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -48,9 +47,6 @@ class MainFragment : Fragment(), CobrowseIO.Redacted {
 
         viewModel = ViewModelProvider(this, CobrowseViewModelFactory())
             .get(MainViewModel::class.java)
-        viewModel.cobrowseDelegate.current.observe(this@MainFragment, Observer {
-            updateUiWithSession(it)
-        })
         viewModel.recentTransactionsResult.observe(this@MainFragment, Observer {
             updateChart(it)
         })
@@ -77,16 +73,10 @@ class MainFragment : Fragment(), CobrowseIO.Redacted {
         menuHost.addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
                 menuInflater.inflate(R.menu.menu_main, menu)
-                this@MainFragment.menu = menu
-                updateUiWithSession(viewModel.cobrowseDelegate.current.value)
             }
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 return when (menuItem.itemId) {
-                    R.id.end_cobrowse_session -> {
-                        viewModel.endCobrowseSession()
-                        true
-                    }
                     R.id.accountFragment -> {
                         //return menuItem.onNavDestinationSelected(findNavController(view))
                         findNavController(view).navigate(R.id.action_mainFragment_to_accountFragment)
@@ -138,12 +128,6 @@ class MainFragment : Fragment(), CobrowseIO.Redacted {
             }
         } finally {
             isTransactionListPresented = true
-        }
-    }
-
-    private fun updateUiWithSession(session: io.cobrowse.Session?) {
-        menu?.findItem(R.id.end_cobrowse_session).let {
-            it?.isVisible = session?.isActive == true
         }
     }
 

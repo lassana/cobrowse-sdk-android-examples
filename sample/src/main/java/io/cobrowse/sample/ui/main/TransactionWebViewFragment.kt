@@ -7,19 +7,12 @@ import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
-import androidx.core.view.MenuHost
-import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
 import io.cobrowse.sample.R
@@ -40,17 +33,12 @@ class TransactionWebViewFragment : Fragment() {
 
     private lateinit var viewModel: TransactionViewModel
     private lateinit var binding: FragmentTransactionWebviewBinding
-    private var menu: Menu? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
         viewModel = ViewModelProvider(this, CobrowseViewModelFactory())
             .get(TransactionViewModel::class.java)
-
-        viewModel.cobrowseDelegate.current.observe(this@TransactionWebViewFragment, Observer {
-            updateUiWithSession(it)
-        })
     }
 
     override fun onCreateView(
@@ -65,33 +53,6 @@ class TransactionWebViewFragment : Fragment() {
             }
         }
         return binding.root
-    }
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        val menuHost: MenuHost = requireActivity()
-        menuHost.addMenuProvider(object : MenuProvider {
-            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                menuInflater.inflate(R.menu.menu_transaction_webview, menu)
-                this@TransactionWebViewFragment.menu = menu
-                updateUiWithSession(viewModel.cobrowseDelegate.current.value)
-            }
-
-            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                if (menuItem.itemId == R.id.end_cobrowse_session) {
-                    viewModel.endCobrowseSession()
-                    return true
-                }
-                return false
-            }
-        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
-    }
-
-    private fun updateUiWithSession(session: io.cobrowse.Session?) {
-        menu?.findItem(R.id.end_cobrowse_session).let {
-            it?.isVisible = session?.isActive == true
-        }
     }
 
     @SuppressLint("SetJavaScriptEnabled")

@@ -2,12 +2,6 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/end_cobrowse_session"
-        android:title="@string/end_cobrowse_session"
-        android:icon="@drawable/ic_action_cancel_presentation"
-        android:visible="false"
-        app:showAsAction="ifRoom" />
-    <item
         android:id="@+id/accountFragment"
         android:icon="@drawable/ic_action_account"
         android:title="@string/menu_item_account"

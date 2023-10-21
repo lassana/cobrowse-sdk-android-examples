@@ -138,8 +138,8 @@ class LoginActivity : AppCompatActivity(), CobrowseIO.Redacted {
     }
 
     private fun updateUiWithSession(session: io.cobrowse.Session?) {
-        menu?.findItem(R.id.end_cobrowse_session).let {
-            it?.isVisible = session?.isActive == true
+        menu?.findItem(R.id.end_cobrowse_session)?.let {
+            it.isVisible = session?.isActive == true
         }
     }
 

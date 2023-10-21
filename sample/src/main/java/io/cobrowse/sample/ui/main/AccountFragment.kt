@@ -3,16 +3,10 @@ package io.cobrowse.sample.ui.main
 import android.content.Intent
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.core.view.MenuHost
-import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation.findNavController
@@ -30,7 +24,6 @@ class AccountFragment : Fragment(), CobrowseIO.Redacted  {
 
     private lateinit var viewModel: AccountViewModel
     private lateinit var binding: FragmentAccountBinding
-    private var menu: Menu? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -90,27 +83,6 @@ class AccountFragment : Fragment(), CobrowseIO.Redacted  {
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        val menuHost: MenuHost = requireActivity()
-        menuHost.addMenuProvider(object : MenuProvider {
-            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                menuInflater.inflate(R.menu.menu_account, menu)
-                this@AccountFragment.menu = menu
-                updateUiWithSession(viewModel.cobrowseDelegate.current.value)
-            }
-
-            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                if (menuItem.itemId == R.id.end_cobrowse_session) {
-                    viewModel.endCobrowseSession()
-                    return true
-                }
-                return false
-            }
-        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
-    }
-
     private fun updateUiWithCobrowseCode(code: String) {
         if (code.isNotEmpty()) {
             binding.sessionCode.text = code
@@ -122,20 +94,17 @@ class AccountFragment : Fragment(), CobrowseIO.Redacted  {
     }
 
     private fun updateUiWithSession(session: io.cobrowse.Session?) {
-        menu?.findItem(R.id.end_cobrowse_session).let {
-            it?.isVisible = session?.isActive == true
-            if (session?.isActive == true) {
-                // Hide the session code label once the session has started
-                binding.sessionCode.visibility = View.INVISIBLE
-                binding.getSessionCode.visibility = View.INVISIBLE
-                binding.agentPresentMode.visibility = View.INVISIBLE
-            } else {
-                binding.getSessionCode.visibility = View.VISIBLE
-                binding.agentPresentMode.visibility = View.VISIBLE
-            }
-            if (session == null) {
-                binding.sessionCode.text = null
-            }
+        if (session?.isActive == true) {
+            // Hide the session code label once the session has started
+            binding.sessionCode.visibility = View.INVISIBLE
+            binding.getSessionCode.visibility = View.INVISIBLE
+            binding.agentPresentMode.visibility = View.INVISIBLE
+        } else {
+            binding.getSessionCode.visibility = View.VISIBLE
+            binding.agentPresentMode.visibility = View.VISIBLE
+        }
+        if (session == null) {
+            binding.sessionCode.text = null
         }
     }
 

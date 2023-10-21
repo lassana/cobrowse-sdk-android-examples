@@ -2,21 +2,14 @@ package io.cobrowse.sample.ui.main
 
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.Menu
-import android.view.MenuInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.EditText
-import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.core.view.MenuHost
-import androidx.core.view.MenuProvider
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.google.android.material.textfield.TextInputLayout
@@ -34,7 +27,6 @@ class AgentPresentFragment : Fragment()  {
 
     private lateinit var viewModel: AgentPresentViewModel
     private lateinit var binding: FragmentAgentPresentBinding
-    private var menu: Menu? = null
     private var inputs: Array<EditText?> = arrayOfNulls(6)
 
     private val inputsLayout: LinearLayout
@@ -83,32 +75,8 @@ class AgentPresentFragment : Fragment()  {
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        val menuHost: MenuHost = requireActivity()
-        menuHost.addMenuProvider(object : MenuProvider {
-            override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
-                menuInflater.inflate(R.menu.menu_agent_present, menu)
-                this@AgentPresentFragment.menu = menu
-                updateUiWithSession(viewModel.cobrowseDelegate.current.value)
-            }
-
-            override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
-                if (menuItem.itemId == R.id.end_cobrowse_session) {
-                    viewModel.endCobrowseSession()
-                    return true
-                }
-                return false
-            }
-        }, viewLifecycleOwner, Lifecycle.State.RESUMED)
-    }
-
-    private fun updateUiWithSession(session: io.cobrowse.Session?) {
+    private fun updateUiWithSession(session: Session?) {
         val isActive = session?.isActive == true
-        menu?.findItem(R.id.end_cobrowse_session).let {
-            it?.isVisible = isActive
-        }
         inputsLayout.visibility = if (isActive) View.GONE else View.VISIBLE
 
         if (session == null || isActive) {

@@ -27,11 +27,6 @@
 
     <style name="Theme.CobrowseioStandalone.Button" parent="ThemeOverlay.Material3.Button" >
         <item name="android:textAllCaps">false</item>
-        <!--
-        <item name="android:textColor">@color/secondaryTextColor</item>
-        <item name="colorButtonNormal">#020e39</item>
-        <item name="android:background">@drawable/button_background</item>
-        -->
     </style>
 
     <style name="Theme.CobrowseioStandalone.Button.Alternative" parent="Theme.CobrowseioStandalone.Button">
