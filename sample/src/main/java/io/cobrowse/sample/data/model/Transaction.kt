@@ -3,6 +3,7 @@ package io.cobrowse.sample.data.model
 import android.content.Context
 import android.graphics.Color
 import android.icu.text.MessageFormat
+import android.net.Uri
 import android.os.Build
 import io.cobrowse.sample.R
 import java.time.LocalDate
@@ -56,6 +57,19 @@ fun Transaction.subtitle(context: Context): String {
         getOrdinal(date.dayOfMonth),
         DateTimeFormatter.ofPattern("HH:mm").format(date))
 }
+
+/**
+ * Returns a remote URL with the details of the provided transaction.
+ */
+fun Transaction.detailsUrl(context: Context): String =
+    Uri.parse("https://cobrowseio.github.io/cobrowse-sdk-ios-examples")
+        .buildUpon()
+        .appendQueryParameter("title", this.title)
+        .appendQueryParameter("subtitle", this.subtitle(context))
+        .appendQueryParameter("amount", context.getString(R.string.transaction_amount, this.amount))
+        .appendQueryParameter("category", this.category.title.lowercase())
+        .build()
+        .toString()
 
 fun LocalDate.transactionGroupHeader() : String {
     return DateTimeFormatter.ofPattern("MMMM y").format(this)

@@ -28,16 +28,31 @@ class TransactionsRecyclerViewAdapter(private val values: List<ListItem>)
      */
     private val displayedCells = HashSet<RecyclerView.ViewHolder>()
 
+    private var onTransactionSelected: ((Transaction) -> Unit) = {}
+
+    fun setOnTransactionSelected(block: (Transaction) -> Unit) { onTransactionSelected = block }
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
-            TYPE_MONTH_AND_YEAR -> MonthAndYearViewHolder(
-                CellTransactionMonthBinding.inflate(LayoutInflater.from(parent.context), parent, false))
-            TYPE_TRANSACTION -> TransactionViewHolder(
-                CellTransactionBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+            TYPE_MONTH_AND_YEAR -> createMonthAndYearViewHolder(parent)
+            TYPE_TRANSACTION -> createTransactionViewHolder(parent)
             else -> throw RuntimeException("Unknown cell type: $viewType")
         }
-
     }
+
+    private fun createMonthAndYearViewHolder(parent: ViewGroup): MonthAndYearViewHolder =
+        MonthAndYearViewHolder(CellTransactionMonthBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+
+    private fun createTransactionViewHolder(parent: ViewGroup): TransactionViewHolder =
+        TransactionViewHolder(CellTransactionBinding.inflate(LayoutInflater.from(parent.context), parent, false))
+            .also { viewHolder ->
+                viewHolder.itemView.setOnClickListener {
+                    if (values[viewHolder.layoutPosition] is TransactionItem) {
+                        val item = values[viewHolder.layoutPosition] as TransactionItem
+                        onTransactionSelected.invoke(item.transaction)
+                    }
+                }
+            }
 
     override fun onViewAttachedToWindow(holder: RecyclerView.ViewHolder) {
         super.onViewAttachedToWindow(holder)

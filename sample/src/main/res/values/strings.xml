@@ -27,4 +27,5 @@
     <string name="button_agent_present">Agent present mode</string>
     <string name="button_get_session_code">Get session code</string>
     <string name="textview_balance_header">Balance</string>
+    <string name="fragment_transaction_webview">Transaction</string>
 </resources>

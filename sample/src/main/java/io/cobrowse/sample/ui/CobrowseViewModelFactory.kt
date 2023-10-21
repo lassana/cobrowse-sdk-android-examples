@@ -9,6 +9,7 @@ import io.cobrowse.sample.ui.login.LoginViewModel
 import io.cobrowse.sample.ui.main.AccountViewModel
 import io.cobrowse.sample.ui.main.AgentPresentViewModel
 import io.cobrowse.sample.ui.main.MainViewModel
+import io.cobrowse.sample.ui.main.TransactionViewModel
 
 /**
  * ViewModel provider factory to instantiate all View-Models uses within the app.
@@ -36,7 +37,9 @@ class CobrowseViewModelFactory : ViewModelProvider.Factory {
             modelClass.isAssignableFrom(AgentPresentViewModel::class.java) -> {
                 AgentPresentViewModel() as T
             }
-
+            modelClass.isAssignableFrom(TransactionViewModel::class.java) -> {
+                TransactionViewModel() as T
+            }
             else -> throw IllegalArgumentException("Unknown ViewModel class")
         }
     }

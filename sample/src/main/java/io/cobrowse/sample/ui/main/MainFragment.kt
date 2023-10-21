@@ -25,6 +25,7 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import io.cobrowse.CobrowseIO
 import io.cobrowse.sample.R
 import io.cobrowse.sample.data.model.Transaction
+import io.cobrowse.sample.data.model.detailsUrl
 import io.cobrowse.sample.databinding.FragmentMainBinding
 import io.cobrowse.sample.ui.CobrowseViewModelFactory
 
@@ -170,8 +171,18 @@ class MainFragment : Fragment(), CobrowseIO.Redacted {
 
     private fun updateTransactions(items: List<Transaction>) {
         with(binding.transactionsList) {
-            adapter = TransactionsRecyclerViewAdapter.from(items)
+            val adapter = TransactionsRecyclerViewAdapter.from(items)
+            adapter.setOnTransactionSelected(::onTransactionSelected)
+            this.adapter = adapter
         }
+    }
+
+    private fun onTransactionSelected(transaction: Transaction) {
+        findNavController(binding.root)
+            .navigate(R.id.action_mainFragment_to_transactionWebViewFragment,
+                      Bundle().also {
+                          it.putString("url", transaction.detailsUrl(requireContext()))
+                      })
     }
 
     override fun redactedViews(): MutableList<View> {

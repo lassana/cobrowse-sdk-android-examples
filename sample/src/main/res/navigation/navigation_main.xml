@@ -17,6 +17,13 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_mainFragment_to_transactionWebViewFragment"
+            app:destination="@id/transactionWebViewFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
     </fragment>
 
     <fragment
@@ -38,5 +45,19 @@
         android:name="io.cobrowse.sample.ui.main.AgentPresentFragment"
         android:label="@string/fragment_agent_present_title"
         tools:layout="@layout/fragment_agent_present" />
+
+    <fragment
+        android:id="@+id/transactionWebViewFragment"
+        android:name="io.cobrowse.sample.ui.main.TransactionWebViewFragment"
+        android:label="@string/fragment_transaction_webview"
+        tools:layout="@layout/fragment_transaction_webview">
+        <action
+            android:id="@+id/action_transactionWebViewFragment_to_transactionWebViewFragment"
+            app:destination="@id/transactionWebViewFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
+    </fragment>
 
 </navigation>
