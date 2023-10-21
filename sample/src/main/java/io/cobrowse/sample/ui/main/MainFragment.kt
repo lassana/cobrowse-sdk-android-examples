@@ -10,6 +10,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.appcompat.widget.LinearLayoutCompat
+import androidx.core.content.ContextCompat.getColor
 import androidx.core.content.ContextCompat.getDrawable
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
@@ -184,6 +185,8 @@ class MainFragment : Fragment(), CobrowseIO.Redacted {
         chart.description = null
         chart.legend.isEnabled = false
         chart.isRotationEnabled = false
+        chart.isDrawHoleEnabled = true
+        chart.setHoleColor(getColor(requireContext(), android.R.color.transparent))
         chart.data = pieData
         chart.invalidate()
     }
