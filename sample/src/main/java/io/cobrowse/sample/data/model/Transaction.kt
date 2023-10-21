@@ -43,19 +43,26 @@ data class Transaction(
 }
 
 fun Transaction.subtitle(context: Context): String {
-
-    fun getOrdinal(number: Int): String {
-        return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
-            val formatter = MessageFormat("{0,ordinal}", Locale.getDefault())
-            formatter.format(arrayOf(number))
-        } else {
-            number.toString()
-        }
-    }
-
     return context.getString(R.string.transaction_detail_subtitle,
-        getOrdinal(date.dayOfMonth),
+        date.dayOfMonth.getOrdinal(context),
         DateTimeFormatter.ofPattern("HH:mm").format(date))
+}
+
+fun Transaction.detailedSubtitle(context: Context): String {
+    return context.getString(R.string.transaction_detail_subtitle_alt,
+        DateTimeFormatter.ofPattern("MMMM").format(date),
+        date.dayOfMonth.getOrdinal(context),
+        DateTimeFormatter.ofPattern("y").format(date),
+        DateTimeFormatter.ofPattern("HH:mm").format(date))
+}
+
+fun Int.getOrdinal(context: Context): String {
+    return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+        val formatter = MessageFormat("{0,ordinal}", Locale.getDefault())
+        formatter.format(arrayOf(this))
+    } else {
+        this.toString()
+    }
 }
 
 /**
@@ -65,7 +72,7 @@ fun Transaction.detailsUrl(context: Context): String =
     Uri.parse("https://cobrowseio.github.io/cobrowse-sdk-ios-examples")
         .buildUpon()
         .appendQueryParameter("title", this.title)
-        .appendQueryParameter("subtitle", this.subtitle(context))
+        .appendQueryParameter("subtitle", this.detailedSubtitle(context))
         .appendQueryParameter("amount", context.getString(R.string.transaction_amount, this.amount))
         .appendQueryParameter("category", this.category.title.lowercase())
         .build()
