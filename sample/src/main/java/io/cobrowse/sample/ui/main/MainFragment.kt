@@ -45,11 +45,14 @@ class MainFragment : Fragment() {
         viewModel.cobrowseDelegate.current.observe(this@MainFragment, Observer {
             updateUiWithSession(it)
         })
-        viewModel.transactionsResult.observe(this@MainFragment, Observer {
+        viewModel.recentTransactionsResult.observe(this@MainFragment, Observer {
             updateChart(it)
         })
         viewModel.balanceResult.observe(this@MainFragment, Observer {
             updateBalance(it)
+        })
+        viewModel.allTransactionsResult.observe(this@MainFragment, Observer {
+            updateTransactions(it)
         })
     }
 
@@ -58,7 +61,6 @@ class MainFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentMainBinding.inflate(layoutInflater)
-
         return binding.root
     }
 
@@ -89,20 +91,28 @@ class MainFragment : Fragment() {
             }
         }, viewLifecycleOwner, Lifecycle.State.RESUMED)
 
-        val bottomSheetBehavior = BottomSheetBehavior.from(binding.transactionsBottomSheet)
-        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
+        with(BottomSheetBehavior.from(binding.transactionsBottomSheet)) {
+            state = BottomSheetBehavior.STATE_HALF_EXPANDED
+        }
 
-        if (viewModel.transactionsResult.isInitialized
-            && viewModel.transactionsResult.value != null) {
-            updateChart(viewModel.transactionsResult.value!!)
+        if (viewModel.recentTransactionsResult.isInitialized
+            && viewModel.recentTransactionsResult.value?.isEmpty() == false) {
+            updateChart(viewModel.recentTransactionsResult.value!!)
         } else {
-            viewModel.loadTransactions()
+            viewModel.loadRecentTransactions()
         }
 
         if (viewModel.balanceResult.isInitialized) {
             updateBalance(viewModel.balanceResult.value)
         } else {
             viewModel.loadBalance()
+        }
+
+        if (viewModel.allTransactionsResult.isInitialized
+            && viewModel.allTransactionsResult.value?.isEmpty() == false) {
+            updateTransactions(viewModel.allTransactionsResult.value!!)
+        } else {
+            viewModel.loadAllTransactions()
         }
     }
 
@@ -124,12 +134,10 @@ class MainFragment : Fragment() {
     private fun updateChart(chart: PieChart,
                             total: TextView,
                             transactions: List<Transaction>) {
-        val pieEntries = ArrayList<PieEntry>()
-        val label = "xyz"
-
         val transactionsDictionary = transactions
             .groupBy { it.category }
             .mapValues { next -> next.value.sumOf { it.amount } }
+        val pieEntries = ArrayList<PieEntry>()
         val colors = ArrayList<Int>()
         for (transaction in transactionsDictionary) {
             colors.add(transaction.key.color)
@@ -141,7 +149,7 @@ class MainFragment : Fragment() {
 
         total.text = getString(R.string.transaction_amount, transactionsDictionary.values.sum())
 
-        val pieDataSet = PieDataSet(pieEntries, label)
+        val pieDataSet = PieDataSet(pieEntries, "type")
         pieDataSet.valueTextSize = 12f
         pieDataSet.colors = colors
         pieDataSet.sliceSpace = 4f
@@ -153,5 +161,11 @@ class MainFragment : Fragment() {
         chart.legend.isEnabled = false
         chart.data = pieData
         chart.invalidate()
+    }
+
+    private fun updateTransactions(items: List<Transaction>) {
+        with(binding.transactionsList) {
+            adapter = TransactionsRecyclerViewAdapter.from(items)
+        }
     }
 }

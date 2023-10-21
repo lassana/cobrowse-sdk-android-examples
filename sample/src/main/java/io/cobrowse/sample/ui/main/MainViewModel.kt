@@ -8,17 +8,24 @@ import io.cobrowse.sample.ui.BaseViewModel
 
 class MainViewModel(private val repository: TransactionsRepository) : BaseViewModel() {
 
-    private val _transactionsResult = MutableLiveData<List<Transaction>>()
-    val transactionsResult: LiveData<List<Transaction>> = _transactionsResult
+    private val _recentTransactionsResult = MutableLiveData<List<Transaction>>()
+    val recentTransactionsResult: LiveData<List<Transaction>> = _recentTransactionsResult
 
     private val _balanceResult = MutableLiveData<Double>()
     val balanceResult: LiveData<Double> = _balanceResult
 
-    fun loadTransactions() {
-        _transactionsResult.value = repository.recentTransactions()
+    private val _allTransactionsResult = MutableLiveData<List<Transaction>>()
+    val allTransactionsResult: LiveData<List<Transaction>> = _allTransactionsResult
+
+    fun loadRecentTransactions() {
+        _recentTransactionsResult.value = repository.recentTransactions()
     }
 
     fun loadBalance() {
         _balanceResult.value = (1000..3000).random() + (0..99).random() / 100.0
+    }
+
+    fun loadAllTransactions() {
+        _allTransactionsResult.value = repository.allTransactions()
     }
 }

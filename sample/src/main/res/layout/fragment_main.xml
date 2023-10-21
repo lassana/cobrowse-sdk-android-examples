@@ -98,13 +98,15 @@
 
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize">
+            android:layout_height="?attr/actionBarSize"
+            android:layout_marginStart="@dimen/list_horizontal_margin"
+            android:layout_marginEnd="@dimen/list_horizontal_margin">
             <View
                 android:layout_width="64dp"
                 android:layout_height="4dp"
                 android:layout_margin="8dp"
                 android:layout_gravity="center_horizontal"
-                android:background="@android:color/darker_gray" />
+                android:background="@color/tertiaryTextColor" />
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
@@ -114,10 +116,13 @@
                 app:title="Transactions" />
         </FrameLayout>
 
-        <View
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/transactions_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:background="@android:color/holo_red_dark" />
+            android:scrollbars="vertical"
+            app:layoutManager="LinearLayoutManager"
+            tools:listitem="@layout/cell_transaction" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 

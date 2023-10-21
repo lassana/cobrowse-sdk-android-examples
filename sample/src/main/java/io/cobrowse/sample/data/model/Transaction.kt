@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.icu.text.MessageFormat
 import android.os.Build
 import io.cobrowse.sample.R
+import java.time.LocalDate
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
@@ -21,10 +22,10 @@ data class Transaction(
         val color: Int,
         val icon: Int) {
 
-        Childcare("Childcare", (80..200), Color.rgb(82, 161, 136), R.mipmap.ic_child),
-        Groceries("Groceries", (10..200), Color.rgb(82, 135, 161), R.mipmap.ic_shopping_card),
-        Leisure("Leisure", (3..20), Color.rgb(92, 82, 161), R.mipmap.ic_movie),
-        Utilities("Utilities", (60..200), Color.rgb(150, 161, 82), R.mipmap.ic_home_paper);
+        Childcare("Childcare", (80..200), Color.rgb(82, 161, 136), R.drawable.ic_child),
+        Groceries("Groceries", (10..200), Color.rgb(82, 135, 161), R.drawable.ic_shopping_card),
+        Leisure("Leisure", (3..20), Color.rgb(92, 82, 161), R.drawable.ic_movie),
+        Utilities("Utilities", (60..200), Color.rgb(150, 161, 82), R.drawable.ic_home_paper);
 
         fun randomName (): String {
             return when (this) {
@@ -51,4 +52,8 @@ fun Transaction.subtitle(context: Context): String {
     return context.getString(R.string.transaction_detail_subtitle,
         getOrdinal(date.dayOfMonth),
         DateTimeFormatter.ofPattern("HH:mm").format(date))
+}
+
+fun LocalDate.transactionGroupHeader() : String {
+    return DateTimeFormatter.ofPattern("MMMM y").format(this)
 }

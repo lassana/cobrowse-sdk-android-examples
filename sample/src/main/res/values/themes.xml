@@ -12,7 +12,7 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor" tools:targetApi="l">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
-        <item name="android:windowBackground">#F8F7FE</item>
+        <item name="android:windowBackground">@color/primaryBackground</item>
         <item name="bottomSheetStyle">@style/Theme.CobrowseioStandalone.BottomSheet</item>
     </style>
 

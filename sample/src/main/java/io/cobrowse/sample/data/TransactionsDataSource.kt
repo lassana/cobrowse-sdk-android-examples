@@ -6,6 +6,11 @@ import java.time.LocalDateTime
 
 class TransactionsDataSource {
     fun generate(count: Int,
+                 between: LocalDateRange): Result<List<Transaction>> {
+        return generate(count, Transaction.Category.values(), between)
+    }
+
+    fun generate(count: Int,
                  categories: Array<Transaction.Category>,
                  between: LocalDateRange): Result<List<Transaction>> {
         try {

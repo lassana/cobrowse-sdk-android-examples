@@ -16,4 +16,13 @@ class TransactionsRepository(private val dataSource: TransactionsDataSource) {
             .flatMap { (it as Result.Success).data }
             .sortedBy { it.date }
     }
+
+    fun allTransactions(): List<Transaction> {
+        val currentDate = LocalDate.now()
+        val minDate = currentDate.minusMonths(3).withDayOfMonth(1)
+
+        return dataSource.generate(30, minDate.rangeTo(currentDate)).let {
+            if (it is Result.Success) (it as Result.Success).data else listOf()
+        }
+    }
 }
