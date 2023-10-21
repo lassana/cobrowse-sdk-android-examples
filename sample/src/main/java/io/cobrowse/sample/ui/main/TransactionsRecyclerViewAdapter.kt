@@ -1,9 +1,12 @@
 package io.cobrowse.sample.ui.main
 
+import android.content.Context
+import android.graphics.drawable.Drawable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.DrawableCompat
 import androidx.recyclerview.widget.RecyclerView
 import io.cobrowse.CobrowseIO
 import io.cobrowse.sample.R
@@ -27,6 +30,11 @@ class TransactionsRecyclerViewAdapter(private val values: List<ListItem>)
      * Keeps all displayed [RecyclerView.ViewHolder] items so they can be redacted in Cobrowse.
      */
     private val displayedCells = HashSet<RecyclerView.ViewHolder>()
+
+    /**
+     * A simple and naive drawable cache.
+     */
+    private val drawables = HashMap<Int, Drawable?>()
 
     private var onTransactionSelected: ((Transaction) -> Unit) = {}
 
@@ -78,6 +86,22 @@ class TransactionsRecyclerViewAdapter(private val values: List<ListItem>)
 
     override fun getItemCount(): Int = values.size
 
+    private fun getDrawable(context: Context,
+                            category: Transaction.Category): Drawable? =
+        getDrawable(context, category.icon, category.color)
+
+    private fun getDrawable(context: Context,
+                            drawableId: Int,
+                            tintColor: Int): Drawable? {
+        if (drawables.contains(drawableId)) {
+            return drawables[drawableId]
+        }
+        return ContextCompat.getDrawable(context, drawableId)?.also {
+            DrawableCompat.setTint(it, tintColor)
+            drawables[drawableId] = it
+        }
+    }
+
     inner class MonthAndYearViewHolder(val binding: CellTransactionMonthBinding)
         : RecyclerView.ViewHolder(binding.root) {
         fun rebind(item: MonthAndYearItem) {
@@ -88,16 +112,13 @@ class TransactionsRecyclerViewAdapter(private val values: List<ListItem>)
     inner class TransactionViewHolder(val binding: CellTransactionBinding)
         : RecyclerView.ViewHolder(binding.root) {
         fun rebind(item: TransactionItem) {
-            binding.root.context.let {
-                // TODO implement drawable cache
-                with(ContextCompat.getDrawable(it, item.transaction.category.icon)) {
-                    this?.setTint(item.transaction.category.color)
-                    binding.imageviewTransactionLogo.setImageDrawable(this)
-                }
+            binding.root.context.let { context ->
+                binding.imageviewTransactionLogo.setImageDrawable(
+                    getDrawable(context, item.transaction.category))
                 binding.textviewTransactionName.text = item.transaction.title
-                binding.textviewTransactionDate.text = item.transaction.subtitle(it)
+                binding.textviewTransactionDate.text = item.transaction.subtitle(context)
                 binding.textviewTransactionAmount.text =
-                    it.getString(R.string.transaction_amount, item.transaction.amount)
+                    context.getString(R.string.transaction_amount, item.transaction.amount)
             }
 
         }

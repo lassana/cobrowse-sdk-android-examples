@@ -94,7 +94,6 @@ class AgentPresentFragment : Fragment()  {
     private fun updateUiWithAgentSession(error: Error?, session: Session?) {
         if (error == null) {
             // Presenting mode has been activated successfully
-            // TODO does the line below disable the full device mode?
             session?.setCapabilities(arrayOfNulls(0), null)
             return
         }

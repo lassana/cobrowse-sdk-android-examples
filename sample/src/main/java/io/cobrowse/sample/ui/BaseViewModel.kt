@@ -12,11 +12,6 @@ abstract class BaseViewModel : ViewModel() {
         get() = CobrowseSessionDelegate.getInstance()
 
     fun endCobrowseSession() {
-        /*
-         * TODO This kills a session even if it's an "Agent Presentation" one.
-         *  What if agent wants to switch from this device to another,
-         *  but keeping the existing session?
-         */
         cobrowseDelegate.current.value?.end(null)
     }
 }
