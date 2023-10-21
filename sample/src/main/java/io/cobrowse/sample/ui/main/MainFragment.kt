@@ -22,12 +22,13 @@ import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import io.cobrowse.CobrowseIO
 import io.cobrowse.sample.R
 import io.cobrowse.sample.data.model.Transaction
 import io.cobrowse.sample.databinding.FragmentMainBinding
 import io.cobrowse.sample.ui.CobrowseViewModelFactory
 
-class MainFragment : Fragment() {
+class MainFragment : Fragment(), CobrowseIO.Redacted {
 
     companion object {
         fun newInstance() = MainFragment()
@@ -167,5 +168,18 @@ class MainFragment : Fragment() {
         with(binding.transactionsList) {
             adapter = TransactionsRecyclerViewAdapter.from(items)
         }
+    }
+
+    override fun redactedViews(): MutableList<View> {
+        val redacted = listOf<View>(
+            binding.textviewBalance,
+            binding.textviewTotalSpent)
+            .toMutableList()
+        binding.transactionsList.adapter.let {
+            if (it is TransactionsRecyclerViewAdapter) {
+                redacted.addAll(it.redactedViews())
+            }
+        }
+        return redacted
     }
 }

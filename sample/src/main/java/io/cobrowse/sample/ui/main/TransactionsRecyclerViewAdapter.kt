@@ -2,9 +2,11 @@ package io.cobrowse.sample.ui.main
 
 import android.graphics.Color
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
+import io.cobrowse.CobrowseIO
 import io.cobrowse.sample.R
 import io.cobrowse.sample.data.model.Transaction
 import io.cobrowse.sample.data.model.subtitle
@@ -18,9 +20,14 @@ import java.time.LocalDate
 /**
  * [RecyclerView.Adapter] that can display a [io.cobrowse.sample.data.model.Transaction].
  */
-class TransactionsRecyclerViewAdapter(
-    private val values: List<ListItem>
-) : RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+class TransactionsRecyclerViewAdapter(private val values: List<ListItem>)
+    : RecyclerView.Adapter<RecyclerView.ViewHolder>(),
+    CobrowseIO.Redacted {
+
+    /**
+     * Keeps all displayed [RecyclerView.ViewHolder] items so they can be redacted in Cobrowse.
+     */
+    private val displayedCells = HashSet<RecyclerView.ViewHolder>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
         return when (viewType) {
@@ -31,6 +38,16 @@ class TransactionsRecyclerViewAdapter(
             else -> throw RuntimeException("Unknown cell type: $viewType")
         }
 
+    }
+
+    override fun onViewAttachedToWindow(holder: RecyclerView.ViewHolder) {
+        super.onViewAttachedToWindow(holder)
+        displayedCells.add(holder)
+    }
+
+    override fun onViewDetachedFromWindow(holder: RecyclerView.ViewHolder) {
+        super.onViewDetachedFromWindow(holder)
+        displayedCells.remove(holder)
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
@@ -47,14 +64,14 @@ class TransactionsRecyclerViewAdapter(
 
     override fun getItemCount(): Int = values.size
 
-    inner class MonthAndYearViewHolder(private val binding: CellTransactionMonthBinding)
+    inner class MonthAndYearViewHolder(val binding: CellTransactionMonthBinding)
         : RecyclerView.ViewHolder(binding.root) {
         fun rebind(item: MonthAndYearItem) {
             binding.textviewMonth.text = item.monthAndYear
         }
     }
 
-    inner class TransactionViewHolder(private val binding: CellTransactionBinding)
+    inner class TransactionViewHolder(val binding: CellTransactionBinding)
         : RecyclerView.ViewHolder(binding.root) {
         fun rebind(item: TransactionItem) {
             binding.root.context.let {
@@ -104,4 +121,14 @@ class TransactionsRecyclerViewAdapter(
             return TransactionsRecyclerViewAdapter(consolidatedList)
         }
     }
+
+    override fun redactedViews(): MutableList<View> = displayedCells
+        .filter { it.itemViewType == TYPE_TRANSACTION }
+        .flatMap { with(it as TransactionViewHolder) {
+            listOf<View>(
+                this.binding.textviewTransactionName,
+                this.binding.textviewTransactionDate,
+                this.binding.textviewTransactionAmount)
+        }}
+        .toMutableList()
 }

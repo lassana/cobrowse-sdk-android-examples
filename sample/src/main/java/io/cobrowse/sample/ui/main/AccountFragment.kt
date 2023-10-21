@@ -16,12 +16,13 @@ import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation.findNavController
+import io.cobrowse.CobrowseIO
 import io.cobrowse.sample.R
 import io.cobrowse.sample.databinding.FragmentAccountBinding
 import io.cobrowse.sample.ui.CobrowseViewModelFactory
 import io.cobrowse.sample.ui.login.LoginActivity
 
-class AccountFragment : Fragment()  {
+class AccountFragment : Fragment(), CobrowseIO.Redacted  {
     companion object {
         fun newInstance() = AccountFragment()
     }
@@ -126,5 +127,12 @@ class AccountFragment : Fragment()  {
                 binding.sessionCode.text = null
             }
         }
+    }
+
+    override fun redactedViews(): MutableList<View> {
+        return listOf<View>(
+            binding.accountEmail,
+            binding.accountName)
+            .toMutableList()
     }
 }
