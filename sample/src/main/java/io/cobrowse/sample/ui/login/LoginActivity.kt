@@ -11,6 +11,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.inputmethod.EditorInfo
 import android.widget.EditText
+import android.widget.ProgressBar
 import android.widget.Toast
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
@@ -78,17 +79,18 @@ class LoginActivity : AppCompatActivity(), CobrowseIO.Redacted {
         loginViewModel.loginResult.observe(this@LoginActivity, Observer {
             val loginResult = it ?: return@Observer
 
-            loading.visibility = View.GONE
+            username.isEnabled = true
+            password.isEnabled = true
             if (loginResult.error != null) {
+                loading.visibility = View.GONE
                 showLoginFailed(loginResult.error)
             }
             if (loginResult.success != null) {
-                updateUiWithUser(loginResult.success)
+                startActivity(Intent(this, MainActivity::class.java))
+                //Complete and destroy login activity once successful
+                setResult(Activity.RESULT_OK)
+                finish()
             }
-            setResult(Activity.RESULT_OK)
-
-            //Complete and destroy login activity once successful
-            finish()
         })
 
         username.afterTextChanged {
@@ -109,17 +111,13 @@ class LoginActivity : AppCompatActivity(), CobrowseIO.Redacted {
             setOnEditorActionListener { _, actionId, _ ->
                 when (actionId) {
                     EditorInfo.IME_ACTION_DONE ->
-                        loginViewModel.login(
-                            username.text.toString(),
-                            password.text.toString()
-                        )
+                        tryLogIn(username, password, loading)
                 }
                 false
             }
 
             login.setOnClickListener {
-                loading.visibility = View.VISIBLE
-                loginViewModel.login(username.text.toString(), password.text.toString())
+                tryLogIn(username, password, loading)
             }
         }
 
@@ -128,8 +126,11 @@ class LoginActivity : AppCompatActivity(), CobrowseIO.Redacted {
         })
     }
 
-    private fun updateUiWithUser(model: LoggedInUserView) {
-        startActivity(Intent(this, MainActivity::class.java))
+    private fun tryLogIn(username: EditText, password: EditText, loading: ProgressBar) {
+        loading.visibility = View.VISIBLE
+        username.isEnabled = false
+        password.isEnabled = false
+        loginViewModel.login(username.text.toString(), password.text.toString())
     }
 
     private fun showLoginFailed(@StringRes errorString: Int) {

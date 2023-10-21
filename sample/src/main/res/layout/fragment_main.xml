@@ -88,12 +88,12 @@
         android:layout_height="match_parent"
         style="?attr/bottomSheetStyle"
         android:background="?android:colorBackground"
+        android:orientation="vertical"
         app:behavior_peekHeight="?attr/actionBarSize"
         app:behavior_hideable="false"
         app:behavior_skipCollapsed="false"
         app:behavior_fitToContents="false"
         app:behavior_halfExpandedRatio="0.4"
-        android:orientation="vertical"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
         <FrameLayout

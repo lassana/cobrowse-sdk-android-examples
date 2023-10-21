@@ -31,9 +31,6 @@ import io.cobrowse.sample.ui.login.afterTextChanged
  * can use this app to share their screen within a "reverse" screensharing session.
  */
 class AgentPresentFragment : Fragment()  {
-    companion object {
-        fun newInstance() = AccountFragment()
-    }
 
     private lateinit var viewModel: AgentPresentViewModel
     private lateinit var binding: FragmentAgentPresentBinding

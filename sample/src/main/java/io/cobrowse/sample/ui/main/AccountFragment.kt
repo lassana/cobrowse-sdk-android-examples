@@ -27,9 +27,6 @@ import io.cobrowse.sample.ui.login.LoginActivity
  * navigation to [AgentPresentFragment].
  */
 class AccountFragment : Fragment(), CobrowseIO.Redacted  {
-    companion object {
-        fun newInstance() = AccountFragment()
-    }
 
     private lateinit var viewModel: AccountViewModel
     private lateinit var binding: FragmentAccountBinding
@@ -58,13 +55,7 @@ class AccountFragment : Fragment(), CobrowseIO.Redacted  {
         })
 
         viewModel.sessionCodeResult.observe(this@AccountFragment, Observer {
-            if (it.isNotEmpty()) {
-                binding.sessionCode.text = it
-                binding.sessionCode.visibility = View.VISIBLE
-            } else {
-                binding.sessionCode.text = null
-                binding.sessionCode.visibility = View.INVISIBLE
-            }
+            updateUiWithCobrowseCode(it)
         })
 
         viewModel.cobrowseDelegate.current.observe(this@AccountFragment, Observer {
@@ -120,12 +111,27 @@ class AccountFragment : Fragment(), CobrowseIO.Redacted  {
         }, viewLifecycleOwner, Lifecycle.State.RESUMED)
     }
 
+    private fun updateUiWithCobrowseCode(code: String) {
+        if (code.isNotEmpty()) {
+            binding.sessionCode.text = code
+            binding.sessionCode.visibility = View.VISIBLE
+        } else {
+            binding.sessionCode.text = null
+            binding.sessionCode.visibility = View.INVISIBLE
+        }
+    }
+
     private fun updateUiWithSession(session: io.cobrowse.Session?) {
         menu?.findItem(R.id.end_cobrowse_session).let {
             it?.isVisible = session?.isActive == true
-            if (session?.isActive == true && binding.sessionCode.visibility == View.VISIBLE) {
+            if (session?.isActive == true) {
                 // Hide the session code label once the session has started
                 binding.sessionCode.visibility = View.INVISIBLE
+                binding.getSessionCode.visibility = View.INVISIBLE
+                binding.agentPresentMode.visibility = View.INVISIBLE
+            } else {
+                binding.getSessionCode.visibility = View.VISIBLE
+                binding.agentPresentMode.visibility = View.VISIBLE
             }
             if (session == null) {
                 binding.sessionCode.text = null

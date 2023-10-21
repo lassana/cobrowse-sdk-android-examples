@@ -37,7 +37,7 @@ class AccountViewModel(private val loginRepository: LoginRepository) : BaseViewM
                 _sessionCodeResult.value = ""
             } else {
                 // We always assume the code has only 6 digits
-                _sessionCodeResult.value = code.substring(0, 3) + code.substring(3, 6)
+                _sessionCodeResult.value = "${code.substring(0, 3)} - ${code.substring(3, 6)}"
             }
         }
     }

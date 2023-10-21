@@ -9,9 +9,11 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.core.content.ContextCompat.getDrawable
 import androidx.core.view.MenuHost
 import androidx.core.view.MenuProvider
+import androidx.core.view.postDelayed
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
@@ -35,13 +37,10 @@ import io.cobrowse.sample.ui.CobrowseViewModelFactory
  */
 class MainFragment : Fragment(), CobrowseIO.Redacted {
 
-    companion object {
-        fun newInstance() = MainFragment()
-    }
-
     private lateinit var viewModel: MainViewModel
     private lateinit var binding: FragmentMainBinding
     private var menu: Menu? = null
+    private var isTransactionListPresented = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -97,10 +96,6 @@ class MainFragment : Fragment(), CobrowseIO.Redacted {
             }
         }, viewLifecycleOwner, Lifecycle.State.RESUMED)
 
-        with(BottomSheetBehavior.from(binding.transactionsBottomSheet)) {
-            state = BottomSheetBehavior.STATE_HALF_EXPANDED
-        }
-
         if (viewModel.recentTransactionsResult.isInitialized
             && viewModel.recentTransactionsResult.value?.isEmpty() == false) {
             updateChart(viewModel.recentTransactionsResult.value!!)
@@ -119,6 +114,29 @@ class MainFragment : Fragment(), CobrowseIO.Redacted {
             updateTransactions(viewModel.allTransactionsResult.value!!)
         } else {
             viewModel.loadAllTransactions()
+        }
+
+        presentTransactionsList(binding.transactionsBottomSheet, savedInstanceState)
+    }
+
+    private fun presentTransactionsList(
+        list: LinearLayoutCompat,
+        savedInstanceState: Bundle?) {
+        try {
+            if (isTransactionListPresented || savedInstanceState != null) {
+                // Fragment views are being constantly recreated during navigation,
+                // and we want to animate the list only on its very first appearance.
+                return
+            }
+            val duration = resources.getInteger(android.R.integer.config_longAnimTime).toLong() * 2
+            list.postDelayed(duration) {
+                with(BottomSheetBehavior.from(list)) {
+                    halfExpandedRatio = 0.4f
+                    state = BottomSheetBehavior.STATE_HALF_EXPANDED
+                }
+            }
+        } finally {
+            isTransactionListPresented = true
         }
     }
 
@@ -165,6 +183,7 @@ class MainFragment : Fragment(), CobrowseIO.Redacted {
 
         chart.description = null
         chart.legend.isEnabled = false
+        chart.isRotationEnabled = false
         chart.data = pieData
         chart.invalidate()
     }
