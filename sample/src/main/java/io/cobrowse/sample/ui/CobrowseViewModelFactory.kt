@@ -26,7 +26,9 @@ class CobrowseViewModelFactory : ViewModelProvider.Factory {
                 ) as T
             }
             modelClass.isAssignableFrom(MainHostViewModel::class.java) -> {
-                MainHostViewModel() as T
+                MainHostViewModel(
+                    loginRepository = LoginRepository.getInstance()
+                ) as T
             }
             modelClass.isAssignableFrom(MainViewModel::class.java) -> {
                 MainViewModel(repository = TransactionsRepository(

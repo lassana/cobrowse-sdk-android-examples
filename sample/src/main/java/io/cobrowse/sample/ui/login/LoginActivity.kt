@@ -2,6 +2,7 @@ package io.cobrowse.sample.ui.login
 
 import android.app.Activity
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -36,6 +37,17 @@ class LoginActivity : AppCompatActivity(), CobrowseIO.Redacted {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        loginViewModel = ViewModelProvider(this, CobrowseViewModelFactory())
+            .get(LoginViewModel::class.java)
+
+        intent?.data?.let { loginViewModel.parseDeepLink(it) }
+
+        if (loginViewModel.isLoggedIn) {
+            // The app UI has been previously destroyed and then restarted
+            onLoginSucceeded()
+            return
+        }
+
         binding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
@@ -58,9 +70,6 @@ class LoginActivity : AppCompatActivity(), CobrowseIO.Redacted {
         val password = binding.password
         val login = binding.login
         val loading = binding.loading
-
-        loginViewModel = ViewModelProvider(this, CobrowseViewModelFactory())
-            .get(LoginViewModel::class.java)
 
         loginViewModel.loginFormState.observe(this@LoginActivity, Observer {
             val loginState = it ?: return@Observer
@@ -86,10 +95,7 @@ class LoginActivity : AppCompatActivity(), CobrowseIO.Redacted {
                 showLoginFailed(loginResult.error)
             }
             if (loginResult.success != null) {
-                startActivity(Intent(this, MainActivity::class.java))
-                //Complete and destroy login activity once successful
-                setResult(Activity.RESULT_OK)
-                finish()
+                onLoginSucceeded()
             }
         })
 
@@ -126,11 +132,23 @@ class LoginActivity : AppCompatActivity(), CobrowseIO.Redacted {
         })
     }
 
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        intent?.data?.let { loginViewModel.parseDeepLink(it) }
+    }
+
     private fun tryLogIn(username: EditText, password: EditText, loading: ProgressBar) {
         loading.visibility = View.VISIBLE
         username.isEnabled = false
         password.isEnabled = false
         loginViewModel.login(username.text.toString(), password.text.toString())
+    }
+
+    private fun onLoginSucceeded() {
+        startActivity(Intent(this, MainActivity::class.java))
+        //Complete and destroy login activity once successful
+        setResult(Activity.RESULT_OK)
+        finish()
     }
 
     private fun showLoginFailed(@StringRes errorString: Int) {

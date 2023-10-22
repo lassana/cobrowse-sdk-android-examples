@@ -1,5 +1,6 @@
 package io.cobrowse.sample.ui.main
 
+import android.content.Intent
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
@@ -17,6 +18,7 @@ import androidx.navigation.ui.NavigationUI
 import io.cobrowse.CobrowseIO
 import io.cobrowse.sample.R
 import io.cobrowse.sample.ui.CobrowseViewModelFactory
+import io.cobrowse.sample.ui.login.LoginActivity
 
 /**
  * Activity that hosts all fragments when user is logged in.
@@ -30,6 +32,15 @@ class MainActivity : AppCompatActivity(), CobrowseIO.Redacted {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        viewModel = ViewModelProvider(this, CobrowseViewModelFactory())
+            .get(MainHostViewModel::class.java)
+
+        if (!viewModel.isLoggedIn) {
+            startActivity(Intent(this, LoginActivity::class.java))
+            finish()
+            return
+        }
 
         addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
@@ -46,8 +57,6 @@ class MainActivity : AppCompatActivity(), CobrowseIO.Redacted {
             }
         })
 
-        viewModel = ViewModelProvider(this, CobrowseViewModelFactory())
-            .get(MainHostViewModel::class.java)
         viewModel.cobrowseDelegate.current.observe(this@MainActivity, Observer {
             updateUiWithSession(it)
         })
