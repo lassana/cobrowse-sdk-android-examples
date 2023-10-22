@@ -33,7 +33,7 @@ android {
     }
     buildFeatures {
         viewBinding true
-        // No data binding as it is maintenance mode
+        // No data binding as it is in maintenance mode
         // https://issuetracker.google.com/issues/173030256#comment10
     }
 }
