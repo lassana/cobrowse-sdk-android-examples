@@ -1,8 +1,10 @@
 package io.cobrowse.sample.ui.main
 
 import android.os.Bundle
+import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
+import android.view.View.OnKeyListener
 import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
@@ -17,7 +19,8 @@ import io.cobrowse.Session
 import io.cobrowse.sample.R
 import io.cobrowse.sample.databinding.FragmentAgentPresentBinding
 import io.cobrowse.sample.ui.CobrowseViewModelFactory
-import io.cobrowse.sample.ui.login.afterTextChanged
+import io.cobrowse.sample.ui.afterTextChanged
+import io.cobrowse.sample.ui.isTextEmpty
 
 /**
  * Fragment that implements Cobrowse.io Agent Present mode: a special mode when an agent
@@ -27,7 +30,7 @@ class AgentPresentFragment : Fragment()  {
 
     private lateinit var viewModel: AgentPresentViewModel
     private lateinit var binding: FragmentAgentPresentBinding
-    private var inputs: Array<EditText?> = arrayOfNulls(6)
+    private var inputs: List<EditText> = emptyList()
 
     private val inputsLayout: LinearLayout
         get() = binding.agentPresentCodeLayout
@@ -55,24 +58,38 @@ class AgentPresentFragment : Fragment()  {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentAgentPresentBinding.inflate(layoutInflater)
+        return binding.root
+    }
 
-        val layout = binding.root.findViewById<LinearLayout>(R.id.agent_present_code_layout)
-        for (i in 0 ..< layout.childCount) {
-            inputs[i] = (layout.getChildAt(i) as TextInputLayout).editText
-            inputs[i]?.afterTextChanged {
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        val layout = binding.agentPresentCodeLayout
+        inputs = (0 ..< layout.childCount).map { i ->
+            val editText = (layout.getChildAt(i) as TextInputLayout).editText
+                ?: throw RuntimeException("Cannot find EditText in TextInputLayout")
+            editText.afterTextChanged {
                 if (it.isEmpty()) {
                     if (i > 0) {
-                        (layout.getChildAt(i - 1) as TextInputLayout).editText?.requestFocus()
+                        inputs[i - 1].requestFocus()
                     }
                 } else if (i == 5) {
                     initiateSession()
                 } else {
-                    (layout.getChildAt(i + 1) as TextInputLayout).editText?.requestFocus()
+                    inputs[i + 1].requestFocus()
                 }
             }
+            editText.setOnKeyListener(object : OnKeyListener {
+                override fun onKey(v: View?, keyCode: Int, event: KeyEvent?): Boolean {
+                    if (keyCode == KeyEvent.KEYCODE_DEL && editText.isTextEmpty() && i > 0) {
+                        inputs[i - 1].requestFocus()
+                        return true
+                    }
+                    return false
+                }
+            })
+            editText
         }
-
-        return binding.root
+        inputs[0].requestFocus()
     }
 
     private fun updateUiWithSession(session: Session?) {
@@ -83,8 +100,8 @@ class AgentPresentFragment : Fragment()  {
             resetInputs()
         }
 
-        if (session == null || !isActive) {
-            inputs[0]?.requestFocus()
+        if ((session == null || !isActive) && inputs.isNotEmpty()) {
+            inputs[0].requestFocus()
         }
 
         mainLabel.text = if (isActive) getString(R.string.agent_present_welcome_you_are_presenting)
@@ -114,22 +131,24 @@ class AgentPresentFragment : Fragment()  {
     private fun initiateSession() {
         val code = arrayOfNulls<String>(6)
         for (i in inputs.indices) {
-            val typed = inputs[i]?.text
+            val typed = inputs[i].text
             if (typed.isNullOrEmpty()) {
                 return
             }
             code[i] = typed[0].toString()
         }
 
-        inputs.forEach { it?.isEnabled = false }
+        inputs.forEach { it.isEnabled = false }
         viewModel.initiateSession(code.joinToString(""))
     }
 
     private fun resetInputs() {
+        if (inputs.isEmpty()) return
+
         inputs.forEach {
-            it?.text = null
-            it?.isEnabled = true
+            it.text = null
+            it.isEnabled = true
         }
-        inputs[0]?.requestFocus()
+        inputs[0].requestFocus()
     }
 }

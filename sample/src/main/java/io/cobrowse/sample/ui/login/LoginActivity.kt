@@ -23,6 +23,7 @@ import io.cobrowse.CobrowseIO
 import io.cobrowse.sample.R
 import io.cobrowse.sample.databinding.ActivityLoginBinding
 import io.cobrowse.sample.ui.CobrowseViewModelFactory
+import io.cobrowse.sample.ui.afterTextChanged
 import io.cobrowse.sample.ui.main.MainActivity
 
 /**
@@ -168,19 +169,4 @@ class LoginActivity : AppCompatActivity(), CobrowseIO.Redacted {
             .filterNotNull()
             .toMutableList()
     }
-}
-
-/**
- * Extension function to simplify setting an afterTextChanged action to EditText components.
- */
-fun EditText.afterTextChanged(afterTextChanged: (String) -> Unit) {
-    this.addTextChangedListener(object : TextWatcher {
-        override fun afterTextChanged(editable: Editable?) {
-            afterTextChanged.invoke(editable.toString())
-        }
-
-        override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
-
-        override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {}
-    })
 }

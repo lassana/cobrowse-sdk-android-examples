@@ -56,6 +56,7 @@
                 android:gravity="center"
                 android:maxLines="1"
                 android:maxLength="1"
+                android:selectAllOnFocus="true"
                 android:inputType="numberDecimal"
                 android:importantForAutofill="no" />
         </com.google.android.material.textfield.TextInputLayout>
@@ -75,6 +76,7 @@
                 android:gravity="center"
                 android:maxLines="1"
                 android:maxLength="1"
+                android:selectAllOnFocus="true"
                 android:inputType="numberDecimal"
                 android:importantForAutofill="no" />
         </com.google.android.material.textfield.TextInputLayout>
@@ -94,6 +96,7 @@
                 android:gravity="center"
                 android:maxLines="1"
                 android:maxLength="1"
+                android:selectAllOnFocus="true"
                 android:inputType="numberDecimal"
                 android:importantForAutofill="no" />
         </com.google.android.material.textfield.TextInputLayout>
@@ -113,6 +116,7 @@
                 android:gravity="center"
                 android:maxLines="1"
                 android:maxLength="1"
+                android:selectAllOnFocus="true"
                 android:inputType="numberDecimal"
                 android:importantForAutofill="no" />
         </com.google.android.material.textfield.TextInputLayout>
@@ -132,6 +136,7 @@
                 android:gravity="center"
                 android:maxLines="1"
                 android:maxLength="1"
+                android:selectAllOnFocus="true"
                 android:inputType="numberDecimal"
                 android:importantForAutofill="no" />
         </com.google.android.material.textfield.TextInputLayout>
@@ -151,6 +156,7 @@
                 android:gravity="center"
                 android:maxLines="1"
                 android:maxLength="1"
+                android:selectAllOnFocus="true"
                 android:inputType="numberDecimal"
                 android:importantForAutofill="no" />
         </com.google.android.material.textfield.TextInputLayout>
