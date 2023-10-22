@@ -13,6 +13,7 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.CobrowseioStandalone">
+        <meta-data android:name="asset_statements" android:resource="@string/asset_statements" />
         <service
             android:name="io.cobrowse.CobrowseAccessibilityService"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
