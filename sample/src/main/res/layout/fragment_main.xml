@@ -87,7 +87,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         style="?attr/bottomSheetStyle"
-        android:background="?android:colorBackground"
+        app:backgroundTint="@color/secondaryBackground"
+        android:backgroundDimAmount="0.9"
         android:orientation="vertical"
         app:behavior_peekHeight="?attr/actionBarSize"
         app:behavior_hideable="false"
@@ -101,12 +102,9 @@
             android:layout_height="?attr/actionBarSize"
             android:layout_marginStart="@dimen/list_horizontal_margin"
             android:layout_marginEnd="@dimen/list_horizontal_margin">
-            <View
-                android:layout_width="64dp"
-                android:layout_height="4dp"
-                android:layout_margin="8dp"
-                android:layout_gravity="center_horizontal"
-                android:background="@color/tertiaryTextColor" />
+            <com.google.android.material.bottomsheet.BottomSheetDragHandleView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"

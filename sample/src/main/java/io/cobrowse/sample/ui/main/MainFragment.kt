@@ -31,6 +31,9 @@ import io.cobrowse.sample.data.model.Transaction
 import io.cobrowse.sample.data.model.detailsUrl
 import io.cobrowse.sample.databinding.FragmentMainBinding
 import io.cobrowse.sample.ui.CobrowseViewModelFactory
+import io.cobrowse.sample.ui.RecyclerViewHeaderItemDecoration
+import io.cobrowse.sample.ui.main.TransactionsRecyclerViewAdapter.ListItem.Companion.TYPE_MONTH_AND_YEAR
+
 
 /**
  * Fragment that displays the recent transactions statistics and also the list of transactions
@@ -180,6 +183,10 @@ class MainFragment : Fragment(), CobrowseIO.Redacted {
             val adapter = TransactionsRecyclerViewAdapter.from(items)
             adapter.setOnTransactionSelected(::onTransactionSelected)
             this.adapter = adapter
+            this.addItemDecoration(RecyclerViewHeaderItemDecoration(
+                this,
+                isHeader = { adapter.getItemViewType(it) == TYPE_MONTH_AND_YEAR }
+            ))
         }
     }
 

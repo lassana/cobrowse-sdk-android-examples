@@ -14,6 +14,7 @@
         <!-- Customize your theme here. -->
         <item name="android:windowBackground">@color/primaryBackground</item>
         <item name="bottomSheetStyle">@style/Theme.CobrowseioStandalone.BottomSheet</item>
+        <item name="bottomSheetDragHandleStyle">@style/Theme.CobrowseioStandalone.BottomSheet.DragHandle</item>
     </style>
 
     <style name="Theme.CobrowseioStandalone.NoActionBar">
@@ -51,6 +52,11 @@
         <item name="cornerSizeTopLeft">16dp</item>
         <item name="cornerSizeBottomRight">0dp</item>
         <item name="cornerSizeBottomLeft">0dp</item>
+    </style>
+
+    <style name="Theme.CobrowseioStandalone.BottomSheet.DragHandle" parent="Widget.Material3.BottomSheet.DragHandle">
+        <item name="tint">?colorOnSurface</item>
+        <item name="android:alpha">0.3</item>
     </style>
 
 </resources>

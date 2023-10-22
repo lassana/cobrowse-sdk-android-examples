@@ -14,5 +14,6 @@
         <!-- Customize your theme here. -->
         <item name="android:windowBackground">@color/primaryBackground</item>
         <item name="bottomSheetStyle">@style/Theme.CobrowseioStandalone.BottomSheet</item>
+        <item name="bottomSheetDragHandleStyle">@style/Theme.CobrowseioStandalone.BottomSheet.DragHandle</item>
     </style>
 </resources>
