@@ -1,7 +1,11 @@
 package io.cobrowse.sample.ui.main
 
+import android.Manifest
+import android.content.pm.PackageManager
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.Menu
 import android.view.MenuInflater
@@ -9,7 +13,9 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.LinearLayoutCompat
+import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getColor
 import androidx.core.content.ContextCompat.getDrawable
 import androidx.core.view.MenuHost
@@ -27,6 +33,7 @@ import com.github.mikephil.charting.data.PieEntry
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import io.cobrowse.CobrowseIO
 import io.cobrowse.sample.R
+import io.cobrowse.sample.data.getAndroidLogTag
 import io.cobrowse.sample.data.model.Transaction
 import io.cobrowse.sample.data.model.detailsUrl
 import io.cobrowse.sample.databinding.FragmentMainBinding
@@ -34,16 +41,28 @@ import io.cobrowse.sample.ui.CobrowseViewModelFactory
 import io.cobrowse.sample.ui.RecyclerViewHeaderItemDecoration
 import io.cobrowse.sample.ui.main.TransactionsRecyclerViewAdapter.ListItem.Companion.TYPE_MONTH_AND_YEAR
 
-
 /**
  * Fragment that displays the recent transactions statistics and also the list of transactions
  * made in the past months.
  */
 class MainFragment : Fragment(), CobrowseIO.Redacted {
 
+    @Suppress("PrivatePropertyName")
+    private val Any.TAG: String
+        get() = javaClass.getAndroidLogTag()
+
     private lateinit var viewModel: MainViewModel
     private lateinit var binding: FragmentMainBinding
     private var isTransactionListPresented = false
+
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
+        if (isGranted) {
+            Log.d(TAG, "FCM SDK and the app can post notifications")
+        } else {
+            Log.w(TAG, "FCM SDK and the app will not show notifications")
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -111,6 +130,20 @@ class MainFragment : Fragment(), CobrowseIO.Redacted {
         }
 
         presentTransactionsList(binding.transactionsBottomSheet, savedInstanceState)
+        askNotificationPermission()
+    }
+
+    private fun askNotificationPermission() {
+        // This is only necessary for API level >= 33 (TIRAMISU)
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            if (ContextCompat.checkSelfPermission(requireContext(), Manifest.permission.POST_NOTIFICATIONS)
+                == PackageManager.PERMISSION_GRANTED) {
+                Log.d(TAG, "FCM SDK and the app can post notifications")
+            } else {
+                // Directly ask for the permission
+                requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+            }
+        }
     }
 
     private fun presentTransactionsList(

@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
 import io.cobrowse.sample.R
+import io.cobrowse.sample.data.getAndroidLogTag
 import io.cobrowse.sample.databinding.FragmentTransactionWebviewBinding
 import io.cobrowse.sample.ui.CobrowseViewModelFactory
 
@@ -24,12 +25,9 @@ import io.cobrowse.sample.ui.CobrowseViewModelFactory
  */
 class TransactionWebViewFragment : Fragment() {
 
-    @Suppress("PropertyName")
-    val Any.TAG: String
-        get() {
-            val tag = javaClass.simpleName
-            return if (tag.length <= 23) tag else tag.substring(0, 23)
-        }
+    @Suppress("PrivatePropertyName")
+    private val Any.TAG: String
+        get() = javaClass.getAndroidLogTag()
 
     private lateinit var viewModel: TransactionViewModel
     private lateinit var binding: FragmentTransactionWebviewBinding

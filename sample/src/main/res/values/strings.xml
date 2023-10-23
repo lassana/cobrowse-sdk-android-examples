@@ -28,4 +28,6 @@
     <string name="button_get_session_code">Get session code</string>
     <string name="textview_balance_header">Balance</string>
     <string name="fragment_transaction_webview">Transaction</string>
+    <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
+    <string name="default_notification_channel_name">Default Notifications</string>
 </resources>
