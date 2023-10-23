@@ -34,7 +34,7 @@ allprojects {
         }
 
         if (!propsFile.exists()) {
-            project.logger.warn("Signing configration at ${propsFile.name} is not found")
+            project.logger.warn("Signing configuration at ${propsFile.name} is not found")
             return
         }
 
