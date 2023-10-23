@@ -12,3 +12,5 @@ local.properties
 google-services.json
 standalone.jks
 standalone.jks.properties
+cobrowse.keystore
+cobrowse.keystore.properties
