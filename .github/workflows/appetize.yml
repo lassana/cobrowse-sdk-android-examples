@@ -2,6 +2,7 @@ name: Publish the sample app to Appetize.io
 
 on:
   push:
+    branches: [ master ]
     paths:
       - 'sample/**'
       - 'build.gradle'
