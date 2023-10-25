@@ -179,12 +179,9 @@ class MainFragment : Fragment(), CobrowseIO.Redacted {
     }
 
     private fun updateChart(transactions: List<Transaction>) {
-         updateChart(binding.chart, binding.textviewTotalSpent, transactions)
-    }
+        val chart: PieChart = binding.chart
+        val total: TextView = binding.textviewTotalSpent
 
-    private fun updateChart(chart: PieChart,
-                            total: TextView,
-                            transactions: List<Transaction>) {
         val transactionsDictionary = transactions
             .groupBy { it.category }
             .mapValues { next -> next.value.sumOf { it.amount } }
@@ -210,7 +207,6 @@ class MainFragment : Fragment(), CobrowseIO.Redacted {
 
         chart.description = null
         chart.legend.isEnabled = false
-        chart.isRotationEnabled = false
         chart.isDrawHoleEnabled = true
         chart.setHoleColor(getColor(requireContext(), android.R.color.transparent))
         chart.data = pieData
