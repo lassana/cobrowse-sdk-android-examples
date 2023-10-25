@@ -12,10 +12,10 @@ import android.view.MenuInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.FrameLayout
 import android.widget.TextView
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getColor
@@ -58,14 +58,21 @@ class TransactionsChartFragment : Fragment(), CobrowseIO.Redacted {
     private lateinit var binding: FragmentTransactionsChartBinding
     private var isTransactionListPresented = false
 
+    @BottomSheetBehavior.State
+    private var bottomSheetState: Int
+        get() = with(BottomSheetBehavior.from(binding.transactionsBottomSheet)) {
+            state
+        }
+        set(value) = with(BottomSheetBehavior.from(binding.transactionsBottomSheet)) {
+            state = value
+        }
+
     private var backPressedCallback: OnBackPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
-            with(BottomSheetBehavior.from(binding.transactionsBottomSheet)) {
-                when (state) {
-                    BottomSheetBehavior.STATE_EXPANDED -> state = BottomSheetBehavior.STATE_HALF_EXPANDED
-                    BottomSheetBehavior.STATE_HALF_EXPANDED -> state = BottomSheetBehavior.STATE_COLLAPSED
-                    else -> invalidateBackPressedCallback()
-                }
+            when (bottomSheetState) {
+                BottomSheetBehavior.STATE_EXPANDED -> bottomSheetState = BottomSheetBehavior.STATE_HALF_EXPANDED
+                BottomSheetBehavior.STATE_HALF_EXPANDED -> bottomSheetState = BottomSheetBehavior.STATE_COLLAPSED
+                else -> invalidateBackPressedCallback()
             }
         }
     }
@@ -104,9 +111,26 @@ class TransactionsChartFragment : Fragment(), CobrowseIO.Redacted {
         navHostFragment = childFragmentManager.findFragmentById(R.id.bottom_sheet_nav_host_fragment) as NavHostFragment
         val navController: NavController = navHostFragment.navController
         val appBarConfiguration = AppBarConfiguration(navController.graph)
-        val toolbar = binding.root.findViewById<Toolbar>(R.id.toolbar)
+        val toolbar = binding.toolbar
 
         NavigationUI.setupWithNavController(toolbar, navController, appBarConfiguration)
+        navController.addOnDestinationChangedListener { controller,  destination, arguments ->
+            run {
+                if (destination.id == R.id.transactionsFragment) {
+                    with(toolbar.layoutParams as FrameLayout.LayoutParams) {
+                        setMargins(resources.getDimension(R.dimen.list_horizontal_margin).toInt(),
+                                   0,
+                                   resources.getDimension(R.dimen.list_horizontal_margin).toInt(),
+                                   0)
+                    }
+                } else {
+                    with(toolbar.layoutParams as FrameLayout.LayoutParams) {
+                        setMargins(0, 0, 0, 0)
+                    }
+                    bottomSheetState = BottomSheetBehavior.STATE_EXPANDED
+                }
+            }
+        }
 
         return binding.root
     }
@@ -195,9 +219,7 @@ class TransactionsChartFragment : Fragment(), CobrowseIO.Redacted {
     }
 
     private fun invalidateBackPressedCallback() {
-        with(BottomSheetBehavior.from(binding.transactionsBottomSheet)) {
-            backPressedCallback.isEnabled = state != BottomSheetBehavior.STATE_COLLAPSED
-        }
+        backPressedCallback.isEnabled = bottomSheetState != BottomSheetBehavior.STATE_COLLAPSED
     }
 
     private fun updateBalance(balance: Double?) {
