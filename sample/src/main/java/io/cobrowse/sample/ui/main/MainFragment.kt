@@ -15,6 +15,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.LinearLayoutCompat
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getColor
 import androidx.core.content.ContextCompat.getDrawable
@@ -40,6 +41,8 @@ import io.cobrowse.sample.databinding.FragmentMainBinding
 import io.cobrowse.sample.ui.CobrowseViewModelFactory
 import io.cobrowse.sample.ui.RecyclerViewHeaderItemDecoration
 import io.cobrowse.sample.ui.main.TransactionsRecyclerViewAdapter.ListItem.Companion.TYPE_MONTH_AND_YEAR
+import io.cobrowse.sample.ui.onSizeChange
+
 
 /**
  * Fragment that displays the recent transactions statistics and also the list of transactions
@@ -129,6 +132,9 @@ class MainFragment : Fragment(), CobrowseIO.Redacted {
             viewModel.loadAllTransactions()
         }
 
+        binding.chart.onSizeChange {
+            resizeChartSummary()
+        }
         presentTransactionsList(binding.transactionsBottomSheet, savedInstanceState)
         askNotificationPermission()
     }
@@ -209,6 +215,37 @@ class MainFragment : Fragment(), CobrowseIO.Redacted {
         chart.setHoleColor(getColor(requireContext(), android.R.color.transparent))
         chart.data = pieData
         chart.invalidate()
+    }
+
+    private fun resizeChartSummary() {
+        val chart: PieChart = binding.chart
+        val total: TextView = binding.textviewTotalSpent
+        val totalHeader: TextView = binding.textviewTotalSpentHeader
+        val totalFooter: TextView = binding.textviewTotalSpentFooter
+        val balance: TextView = binding.textviewBalance
+
+        val desiredWidth = ((chart.holeRadius / 100f) * (chart.radius) * 1.5f).toInt()
+        val desiredHeight = desiredWidth / 3
+
+        if (total.layoutParams is ConstraintLayout.LayoutParams) {
+            total.layoutParams.width = desiredWidth
+            total.layoutParams.height = desiredHeight
+            total.requestLayout()
+        }
+        if (totalHeader.layoutParams is ConstraintLayout.LayoutParams) {
+            totalHeader.layoutParams.width = desiredWidth
+            totalHeader.requestLayout()
+        }
+        if (totalFooter.layoutParams is ConstraintLayout.LayoutParams) {
+            totalFooter.layoutParams.width = desiredWidth
+            totalFooter.requestLayout()
+        }
+        if (balance.layoutParams is ConstraintLayout.LayoutParams) {
+            // Set the balance label height the same like in the "spent this month" height,
+            // so their text sizes will be the same.
+            balance.layoutParams.height = desiredHeight
+            balance.requestLayout()
+        }
     }
 
     private fun updateTransactions(items: List<Transaction>) {

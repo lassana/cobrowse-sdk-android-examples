@@ -19,68 +19,82 @@
 
         <TextView
             android:id="@+id/textview_balance_header"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
             android:maxLines="1"
             android:text="@string/textview_balance_header"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
+        <androidx.appcompat.widget.AppCompatTextView
             android:id="@+id/textview_balance"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:gravity="center_horizontal|top"
             android:maxLines="1"
             android:textColor="@color/primaryColor"
             android:textSize="22sp"
             android:textStyle="bold"
+            app:autoSizeTextType="uniform"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/textview_balance_header"
+            tools:layout_height="wrap_content"
             tools:text="$0000.00" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/textview_total_spent"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:gravity="center"
+            android:maxLines="1"
+            android:textColor="@color/primaryColor"
+            android:textSize="22sp"
+            android:textStyle="bold"
+            app:autoSizeTextType="uniform"
+            app:layout_constraintBottom_toBottomOf="@id/chart"
+            app:layout_constraintEnd_toEndOf="@id/chart"
+            app:layout_constraintStart_toStartOf="@id/chart"
+            app:layout_constraintTop_toTopOf="@id/chart"
+            tools:layout_height="wrap_content"
+            tools:layout_width="wrap_content"
+            tools:text="$000.00" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/textview_total_spent_footer"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:maxLines="1"
+            android:text="@string/total_spent_amount_footer"
+            app:autoSizeTextType="uniform"
+            app:layout_constraintEnd_toEndOf="@id/chart"
+            app:layout_constraintStart_toStartOf="@id/chart"
+            app:layout_constraintTop_toBottomOf="@id/textview_total_spent"
+            tools:layout_width="wrap_content" />
+
+        <androidx.appcompat.widget.AppCompatTextView
+            android:id="@+id/textview_total_spent_header"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:gravity="center_horizontal"
+            android:maxLines="1"
+            android:text="@string/total_spent_amount_header"
+            app:autoSizeTextType="uniform"
+            app:layout_constraintBottom_toTopOf="@id/textview_total_spent"
+            app:layout_constraintEnd_toEndOf="@id/chart"
+            app:layout_constraintStart_toStartOf="@id/chart"
+            tools:layout_width="wrap_content" />
 
         <com.github.mikephil.charting.charts.PieChart
             android:id="@+id/chart"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:layout_marginTop="8dp"
             app:layout_constraintHeight_percent="0.5"
-            android:layout_marginTop="15sp"
             app:layout_constraintTop_toBottomOf="@id/textview_balance" />
-
-        <TextView
-            android:id="@+id/textview_total_spent"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:maxLines="1"
-            android:textColor="@color/primaryColor"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            app:layout_constraintBottom_toBottomOf="@id/chart"
-            app:layout_constraintEnd_toEndOf="@id/chart"
-            app:layout_constraintStart_toStartOf="@id/chart"
-            app:layout_constraintTop_toTopOf="@id/chart"
-            tools:text="$000.00" />
-
-        <TextView
-            android:id="@+id/textview_total_spent_footer"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:maxLines="1"
-            android:text="@string/total_spent_amount_footer"
-            app:layout_constraintEnd_toEndOf="@id/chart"
-            app:layout_constraintStart_toStartOf="@id/chart"
-            app:layout_constraintTop_toBottomOf="@id/textview_total_spent" />
-
-        <TextView
-            android:id="@+id/textview_total_spent_header"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:maxLines="1"
-            android:text="@string/total_spent_amount_header"
-            app:layout_constraintBottom_toTopOf="@id/textview_total_spent"
-            app:layout_constraintEnd_toEndOf="@id/chart"
-            app:layout_constraintStart_toStartOf="@id/chart" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
