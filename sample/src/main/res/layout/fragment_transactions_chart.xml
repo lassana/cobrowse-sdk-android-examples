@@ -1,146 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.coordinatorlayout.widget.CoordinatorLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:paddingLeft="@dimen/activity_horizontal_margin"
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:paddingRight="@dimen/activity_horizontal_margin"
+    android:paddingBottom="@dimen/activity_vertical_margin"
+    tools:context=".ui.main.TransactionsChartFragment">
 
-
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <TextView
+        android:id="@+id/textview_balance_header"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:paddingLeft="@dimen/activity_horizontal_margin"
-        android:paddingTop="@dimen/activity_vertical_margin"
-        android:paddingRight="@dimen/activity_horizontal_margin"
-        android:paddingBottom="@dimen/activity_vertical_margin"
-        tools:context=".ui.main.MainFragment">
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:maxLines="1"
+        android:text="@string/textview_balance_header"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
-        <TextView
-            android:id="@+id/textview_balance_header"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:maxLines="1"
-            android:text="@string/textview_balance_header"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/textview_balance"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:gravity="center_horizontal|top"
-            android:maxLines="1"
-            android:textColor="@color/primaryColor"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            app:autoSizeTextType="uniform"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/textview_balance_header"
-            tools:layout_height="wrap_content"
-            tools:text="$0000.00" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/textview_total_spent"
-            android:layout_width="0dp"
-            android:layout_height="0dp"
-            android:gravity="center"
-            android:maxLines="1"
-            android:textColor="@color/primaryColor"
-            android:textSize="22sp"
-            android:textStyle="bold"
-            app:autoSizeTextType="uniform"
-            app:layout_constraintBottom_toBottomOf="@id/chart"
-            app:layout_constraintEnd_toEndOf="@id/chart"
-            app:layout_constraintStart_toStartOf="@id/chart"
-            app:layout_constraintTop_toTopOf="@id/chart"
-            tools:layout_height="wrap_content"
-            tools:layout_width="wrap_content"
-            tools:text="$000.00" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/textview_total_spent_footer"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:maxLines="1"
-            android:text="@string/total_spent_amount_footer"
-            app:autoSizeTextType="uniform"
-            app:layout_constraintEnd_toEndOf="@id/chart"
-            app:layout_constraintStart_toStartOf="@id/chart"
-            app:layout_constraintTop_toBottomOf="@id/textview_total_spent"
-            tools:layout_width="wrap_content" />
-
-        <androidx.appcompat.widget.AppCompatTextView
-            android:id="@+id/textview_total_spent_header"
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:gravity="center_horizontal"
-            android:maxLines="1"
-            android:text="@string/total_spent_amount_header"
-            app:autoSizeTextType="uniform"
-            app:layout_constraintBottom_toTopOf="@id/textview_total_spent"
-            app:layout_constraintEnd_toEndOf="@id/chart"
-            app:layout_constraintStart_toStartOf="@id/chart"
-            tools:layout_width="wrap_content" />
-
-        <com.github.mikephil.charting.charts.PieChart
-            android:id="@+id/chart"
-            android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_marginTop="8dp"
-            app:layout_constraintHeight_percent="0.5"
-            app:layout_constraintTop_toBottomOf="@id/textview_balance" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <androidx.appcompat.widget.LinearLayoutCompat
-        android:id="@+id/transactionsBottomSheet"
-        style="?attr/bottomSheetStyle"
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/textview_balance"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:backgroundDimAmount="0.9"
-        android:orientation="vertical"
-        app:backgroundTint="@color/secondaryBackground"
-        app:behavior_fitToContents="false"
-        app:behavior_halfExpandedRatio="0.4"
-        app:behavior_hideable="false"
-        app:behavior_peekHeight="?attr/actionBarSize"
-        app:behavior_skipCollapsed="false"
-        app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
+        android:layout_height="0dp"
+        android:gravity="center_horizontal|top"
+        android:maxLines="1"
+        android:textColor="@color/primaryColor"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        app:autoSizeTextType="uniform"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/textview_balance_header"
+        tools:layout_height="wrap_content"
+        tools:text="$0000.00" />
 
-        <FrameLayout
-            android:id="@+id/toolbarHost"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize">
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/textview_total_spent"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:gravity="center"
+        android:maxLines="1"
+        android:textColor="@color/primaryColor"
+        android:textSize="22sp"
+        android:textStyle="bold"
+        app:autoSizeTextType="uniform"
+        app:layout_constraintBottom_toBottomOf="@id/chart"
+        app:layout_constraintEnd_toEndOf="@id/chart"
+        app:layout_constraintStart_toStartOf="@id/chart"
+        app:layout_constraintTop_toTopOf="@id/chart"
+        tools:layout_height="wrap_content"
+        tools:layout_width="wrap_content"
+        tools:text="$000.00" />
 
-            <androidx.appcompat.widget.Toolbar
-                android:id="@+id/toolbar"
-                android:layout_width="match_parent"
-                android:layout_height="?attr/actionBarSize"
-                android:layout_marginStart="@dimen/list_horizontal_margin"
-                android:layout_marginEnd="@dimen/list_horizontal_margin"
-                android:background="@android:color/transparent"
-                app:popupTheme="@style/Theme.CobrowseioStandalone.PopupOverlay"
-                app:title="@string/fragment_transaction" />
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/textview_total_spent_footer"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:maxLines="1"
+        android:text="@string/total_spent_amount_footer"
+        app:autoSizeTextType="uniform"
+        app:layout_constraintEnd_toEndOf="@id/chart"
+        app:layout_constraintStart_toStartOf="@id/chart"
+        app:layout_constraintTop_toBottomOf="@id/textview_total_spent"
+        tools:layout_width="wrap_content" />
 
-            <com.google.android.material.bottomsheet.BottomSheetDragHandleView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
-        </FrameLayout>
+    <androidx.appcompat.widget.AppCompatTextView
+        android:id="@+id/textview_total_spent_header"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:gravity="center_horizontal"
+        android:maxLines="1"
+        android:text="@string/total_spent_amount_header"
+        app:autoSizeTextType="uniform"
+        app:layout_constraintBottom_toTopOf="@id/textview_total_spent"
+        app:layout_constraintEnd_toEndOf="@id/chart"
+        app:layout_constraintStart_toStartOf="@id/chart"
+        tools:layout_width="wrap_content" />
 
-        <androidx.fragment.app.FragmentContainerView
-            android:id="@+id/bottom_sheet_nav_host_fragment"
-            android:name="androidx.navigation.fragment.NavHostFragment"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:defaultNavHost="true"
-            app:navGraph="@navigation/navigation_transactions" />
+    <com.github.mikephil.charting.charts.PieChart
+        android:id="@+id/chart"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="8dp"
+        app:layout_constraintHeight_percent="0.5"
+        app:layout_constraintTop_toBottomOf="@id/textview_balance" />
 
-    </androidx.appcompat.widget.LinearLayoutCompat>
-
-</androidx.coordinatorlayout.widget.CoordinatorLayout>
+</androidx.constraintlayout.widget.ConstraintLayout>
