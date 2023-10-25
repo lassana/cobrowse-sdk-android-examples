@@ -2,4 +2,6 @@
 <resources>
     <color name="primaryBackground">#171811</color>
     <color name="secondaryBackground">#131318</color>
+    <color name="surface">@color/primaryColor</color>
+    <color name="onSurface">@color/secondaryTextColor</color>
 </resources>

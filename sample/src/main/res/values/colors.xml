@@ -18,4 +18,7 @@
     <color name="secondaryBackground">#FFF</color>
 
     <color name="ic_launcher_background">#FBF9FE</color>
+
+    <color name="surface">@color/primaryBackground</color>
+    <color name="onSurface">@color/primaryTextColor</color>
 </resources>
