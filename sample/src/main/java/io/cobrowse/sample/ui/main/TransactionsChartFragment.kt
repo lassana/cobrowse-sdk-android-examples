@@ -13,6 +13,7 @@ import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
@@ -56,6 +57,18 @@ class TransactionsChartFragment : Fragment(), CobrowseIO.Redacted {
     private lateinit var viewModel: TransactionsChartViewModel
     private lateinit var binding: FragmentTransactionsChartBinding
     private var isTransactionListPresented = false
+
+    private var backPressedCallback: OnBackPressedCallback = object : OnBackPressedCallback(true) {
+        override fun handleOnBackPressed() {
+            with(BottomSheetBehavior.from(binding.transactionsBottomSheet)) {
+                when (state) {
+                    BottomSheetBehavior.STATE_EXPANDED -> state = BottomSheetBehavior.STATE_HALF_EXPANDED
+                    BottomSheetBehavior.STATE_HALF_EXPANDED -> state = BottomSheetBehavior.STATE_COLLAPSED
+                    else -> invalidateBackPressedCallback()
+                }
+            }
+        }
+    }
 
     private lateinit var navHostFragment: NavHostFragment
 
@@ -119,6 +132,8 @@ class TransactionsChartFragment : Fragment(), CobrowseIO.Redacted {
             }
         }, viewLifecycleOwner, Lifecycle.State.RESUMED)
 
+        requireActivity().onBackPressedDispatcher.addCallback(viewLifecycleOwner, backPressedCallback)
+
         if (viewModel.recentTransactionsResult.isInitialized
             && viewModel.recentTransactionsResult.value?.isEmpty() == false) {
             updateChart(viewModel.recentTransactionsResult.value!!)
@@ -134,6 +149,12 @@ class TransactionsChartFragment : Fragment(), CobrowseIO.Redacted {
 
         binding.chart.onSizeChange {
             resizeChartSummary()
+        }
+        with(BottomSheetBehavior.from(binding.transactionsBottomSheet)) {
+            addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+                override fun onStateChanged(bottomSheet: View, newState: Int) = invalidateBackPressedCallback()
+                override fun onSlide(bottomSheet: View, slideOffset: Float) { }
+            })
         }
         presentTransactionsList(binding.transactionsBottomSheet, savedInstanceState)
         askNotificationPermission()
@@ -170,6 +191,12 @@ class TransactionsChartFragment : Fragment(), CobrowseIO.Redacted {
             }
         } finally {
             isTransactionListPresented = true
+        }
+    }
+
+    private fun invalidateBackPressedCallback() {
+        with(BottomSheetBehavior.from(binding.transactionsBottomSheet)) {
+            backPressedCallback.isEnabled = state != BottomSheetBehavior.STATE_COLLAPSED
         }
     }
 
