@@ -26,7 +26,7 @@ import io.cobrowse.sample.ui.login.LoginActivity
 class MainActivity : AppCompatActivity(), CobrowseIO.Redacted {
 
     private lateinit var navHostFragment: NavHostFragment
-    private lateinit var viewModel: MainHostViewModel
+    private lateinit var viewModel: MainViewModel
     private var menu: Menu? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -34,7 +34,7 @@ class MainActivity : AppCompatActivity(), CobrowseIO.Redacted {
         setContentView(R.layout.activity_main)
 
         viewModel = ViewModelProvider(this, CobrowseViewModelFactory())
-            .get(MainHostViewModel::class.java)
+            .get(MainViewModel::class.java)
 
         if (!viewModel.isLoggedIn) {
             startActivity(Intent(this, LoginActivity::class.java))

@@ -100,17 +100,17 @@
 
     <androidx.appcompat.widget.LinearLayoutCompat
         android:id="@+id/transactionsBottomSheet"
+        style="?attr/bottomSheetStyle"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        style="?attr/bottomSheetStyle"
-        app:backgroundTint="@color/secondaryBackground"
         android:backgroundDimAmount="0.9"
         android:orientation="vertical"
-        app:behavior_peekHeight="?attr/actionBarSize"
-        app:behavior_hideable="false"
-        app:behavior_skipCollapsed="false"
+        app:backgroundTint="@color/secondaryBackground"
         app:behavior_fitToContents="false"
         app:behavior_halfExpandedRatio="0.4"
+        app:behavior_hideable="false"
+        app:behavior_peekHeight="?attr/actionBarSize"
+        app:behavior_skipCollapsed="false"
         app:layout_behavior="com.google.android.material.bottomsheet.BottomSheetBehavior">
 
         <FrameLayout
@@ -118,25 +118,27 @@
             android:layout_height="?attr/actionBarSize"
             android:layout_marginStart="@dimen/list_horizontal_margin"
             android:layout_marginEnd="@dimen/list_horizontal_margin">
-            <com.google.android.material.bottomsheet.BottomSheetDragHandleView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"/>
+
             <androidx.appcompat.widget.Toolbar
                 android:id="@+id/toolbar"
                 android:layout_width="match_parent"
                 android:layout_height="?attr/actionBarSize"
                 android:background="@android:color/transparent"
                 app:popupTheme="@style/Theme.CobrowseioStandalone.PopupOverlay"
-                app:title="Transactions" />
+                app:title="@string/fragment_transaction" />
+
+            <com.google.android.material.bottomsheet.BottomSheetDragHandleView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content" />
         </FrameLayout>
 
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/transactions_list"
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/bottom_sheet_nav_host_fragment"
+            android:name="androidx.navigation.fragment.NavHostFragment"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:scrollbars="vertical"
-            app:layoutManager="LinearLayoutManager"
-            tools:listitem="@layout/cell_transaction" />
+            app:defaultNavHost="true"
+            app:navGraph="@navigation/navigation_transactions" />
 
     </androidx.appcompat.widget.LinearLayoutCompat>
 

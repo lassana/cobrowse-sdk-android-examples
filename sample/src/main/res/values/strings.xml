@@ -30,4 +30,5 @@
     <string name="fragment_transaction_webview">Transaction</string>
     <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
     <string name="default_notification_channel_name">Default Notifications</string>
+    <string name="fragment_transaction">Transactions</string>
 </resources>

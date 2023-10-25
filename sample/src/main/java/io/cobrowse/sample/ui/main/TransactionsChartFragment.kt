@@ -14,7 +14,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.appcompat.widget.LinearLayoutCompat
+import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getColor
@@ -26,7 +26,11 @@ import androidx.fragment.app.Fragment
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.navigation.NavController
 import androidx.navigation.Navigation.findNavController
+import androidx.navigation.fragment.NavHostFragment
+import androidx.navigation.ui.AppBarConfiguration
+import androidx.navigation.ui.NavigationUI
 import com.github.mikephil.charting.charts.PieChart
 import com.github.mikephil.charting.data.PieData
 import com.github.mikephil.charting.data.PieDataSet
@@ -36,27 +40,24 @@ import io.cobrowse.CobrowseIO
 import io.cobrowse.sample.R
 import io.cobrowse.sample.data.getAndroidLogTag
 import io.cobrowse.sample.data.model.Transaction
-import io.cobrowse.sample.data.model.detailsUrl
-import io.cobrowse.sample.databinding.FragmentMainBinding
+import io.cobrowse.sample.databinding.FragmentTransactionsChartBinding
 import io.cobrowse.sample.ui.CobrowseViewModelFactory
-import io.cobrowse.sample.ui.RecyclerViewHeaderItemDecoration
-import io.cobrowse.sample.ui.main.TransactionsRecyclerViewAdapter.ListItem.Companion.TYPE_MONTH_AND_YEAR
 import io.cobrowse.sample.ui.onSizeChange
 
-
 /**
- * Fragment that displays the recent transactions statistics and also the list of transactions
- * made in the past months.
+ * Fragment that displays the recent transactions statistics.
  */
-class MainFragment : Fragment(), CobrowseIO.Redacted {
+class TransactionsChartFragment : Fragment(), CobrowseIO.Redacted {
 
     @Suppress("PrivatePropertyName")
     private val Any.TAG: String
         get() = javaClass.getAndroidLogTag()
 
-    private lateinit var viewModel: MainViewModel
-    private lateinit var binding: FragmentMainBinding
+    private lateinit var viewModel: TransactionsChartViewModel
+    private lateinit var binding: FragmentTransactionsChartBinding
     private var isTransactionListPresented = false
+
+    private lateinit var navHostFragment: NavHostFragment
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()) { isGranted: Boolean ->
@@ -71,15 +72,13 @@ class MainFragment : Fragment(), CobrowseIO.Redacted {
         super.onCreate(savedInstanceState)
 
         viewModel = ViewModelProvider(this, CobrowseViewModelFactory())
-            .get(MainViewModel::class.java)
-        viewModel.recentTransactionsResult.observe(this@MainFragment, Observer {
+            .get(TransactionsChartViewModel::class.java)
+
+        viewModel.recentTransactionsResult.observe(this@TransactionsChartFragment, Observer {
             updateChart(it)
         })
-        viewModel.balanceResult.observe(this@MainFragment, Observer {
+        viewModel.balanceResult.observe(this@TransactionsChartFragment, Observer {
             updateBalance(it)
-        })
-        viewModel.allTransactionsResult.observe(this@MainFragment, Observer {
-            updateTransactions(it)
         })
     }
 
@@ -87,7 +86,15 @@ class MainFragment : Fragment(), CobrowseIO.Redacted {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentMainBinding.inflate(layoutInflater)
+        binding = FragmentTransactionsChartBinding.inflate(layoutInflater)
+
+        navHostFragment = childFragmentManager.findFragmentById(R.id.bottom_sheet_nav_host_fragment) as NavHostFragment
+        val navController: NavController = navHostFragment.navController
+        val appBarConfiguration = AppBarConfiguration(navController.graph)
+        val toolbar = binding.root.findViewById<Toolbar>(R.id.toolbar)
+
+        NavigationUI.setupWithNavController(toolbar, navController, appBarConfiguration)
+
         return binding.root
     }
 
@@ -104,7 +111,7 @@ class MainFragment : Fragment(), CobrowseIO.Redacted {
                 return when (menuItem.itemId) {
                     R.id.accountFragment -> {
                         //return menuItem.onNavDestinationSelected(findNavController(view))
-                        findNavController(view).navigate(R.id.action_mainFragment_to_accountFragment)
+                        findNavController(view).navigate(R.id.action_transactionsChartFragment_to_accountFragment)
                         true
                     }
                     else -> false
@@ -123,13 +130,6 @@ class MainFragment : Fragment(), CobrowseIO.Redacted {
             updateBalance(viewModel.balanceResult.value)
         } else {
             viewModel.loadBalance()
-        }
-
-        if (viewModel.allTransactionsResult.isInitialized
-            && viewModel.allTransactionsResult.value?.isEmpty() == false) {
-            updateTransactions(viewModel.allTransactionsResult.value!!)
-        } else {
-            viewModel.loadAllTransactions()
         }
 
         binding.chart.onSizeChange {
@@ -153,7 +153,7 @@ class MainFragment : Fragment(), CobrowseIO.Redacted {
     }
 
     private fun presentTransactionsList(
-        list: LinearLayoutCompat,
+        list: ViewGroup,
         savedInstanceState: Bundle?) {
         try {
             if (isTransactionListPresented || savedInstanceState != null) {
@@ -244,36 +244,10 @@ class MainFragment : Fragment(), CobrowseIO.Redacted {
         }
     }
 
-    private fun updateTransactions(items: List<Transaction>) {
-        with(binding.transactionsList) {
-            val adapter = TransactionsRecyclerViewAdapter.from(items)
-            adapter.setOnTransactionSelected(::onTransactionSelected)
-            this.adapter = adapter
-            this.addItemDecoration(RecyclerViewHeaderItemDecoration(
-                this,
-                isHeader = { adapter.getItemViewType(it) == TYPE_MONTH_AND_YEAR }
-            ))
-        }
-    }
-
-    private fun onTransactionSelected(transaction: Transaction) {
-        findNavController(binding.root)
-            .navigate(R.id.action_mainFragment_to_transactionWebViewFragment,
-                      Bundle().also {
-                          it.putString("url", transaction.detailsUrl(requireContext()))
-                      })
-    }
-
     override fun redactedViews(): MutableList<View> {
-        val redacted = listOf<View>(
+        return listOf<View>(
             binding.textviewBalance,
             binding.textviewTotalSpent)
             .toMutableList()
-        binding.transactionsList.adapter.let {
-            if (it is TransactionsRecyclerViewAdapter) {
-                redacted.addAll(it.redactedViews())
-            }
-        }
-        return redacted
     }
 }

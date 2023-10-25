@@ -8,9 +8,10 @@ import io.cobrowse.sample.data.TransactionsRepository
 import io.cobrowse.sample.ui.login.LoginViewModel
 import io.cobrowse.sample.ui.main.AccountViewModel
 import io.cobrowse.sample.ui.main.AgentPresentViewModel
-import io.cobrowse.sample.ui.main.MainHostViewModel
 import io.cobrowse.sample.ui.main.MainViewModel
 import io.cobrowse.sample.ui.main.TransactionViewModel
+import io.cobrowse.sample.ui.main.TransactionsChartViewModel
+import io.cobrowse.sample.ui.main.TransactionsViewModel
 
 /**
  * View-Model provider factory to instantiate all View-Models used in the app.
@@ -25,13 +26,18 @@ class CobrowseViewModelFactory : ViewModelProvider.Factory {
                     loginRepository = LoginRepository.getInstance()
                 ) as T
             }
-            modelClass.isAssignableFrom(MainHostViewModel::class.java) -> {
-                MainHostViewModel(
+            modelClass.isAssignableFrom(MainViewModel::class.java) -> {
+                MainViewModel(
                     loginRepository = LoginRepository.getInstance()
                 ) as T
             }
-            modelClass.isAssignableFrom(MainViewModel::class.java) -> {
-                MainViewModel(repository = TransactionsRepository(
+            modelClass.isAssignableFrom(TransactionsChartViewModel::class.java) -> {
+                TransactionsChartViewModel(repository = TransactionsRepository(
+                    dataSource = TransactionsDataSource()
+                )) as T
+            }
+            modelClass.isAssignableFrom(TransactionsViewModel::class.java) -> {
+                TransactionsViewModel(repository = TransactionsRepository(
                     dataSource = TransactionsDataSource()
                 )) as T
             }
