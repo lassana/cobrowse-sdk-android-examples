@@ -24,17 +24,17 @@
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/textview_balance"
-        android:layout_width="match_parent"
+        android:layout_width="0dp"
         android:layout_height="0dp"
         android:gravity="center_horizontal|top"
         android:maxLines="1"
         android:textColor="@color/primaryColor"
         android:textSize="22sp"
-        android:textStyle="bold"
         app:autoSizeTextType="uniform"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/textview_balance_header"
+        tools:layout_width="wrap_content"
         tools:layout_height="wrap_content"
         tools:text="$0000.00" />
 
@@ -46,7 +46,6 @@
         android:maxLines="1"
         android:textColor="@color/primaryColor"
         android:textSize="22sp"
-        android:textStyle="bold"
         app:autoSizeTextType="uniform"
         app:layout_constraintBottom_toBottomOf="@id/chart"
         app:layout_constraintEnd_toEndOf="@id/chart"

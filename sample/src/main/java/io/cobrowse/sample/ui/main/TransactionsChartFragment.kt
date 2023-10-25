@@ -197,8 +197,9 @@ class TransactionsChartFragment : Fragment(), CobrowseIO.Redacted {
             totalFooter.requestLayout()
         }
         if (balance.layoutParams is ConstraintLayout.LayoutParams) {
-            // Set the balance label height the same like in the "spent this month" height,
+            // Set the balance label size the same like in the "spent this month" height,
             // so their text sizes will be the same.
+            balance.layoutParams.width = desiredWidth
             balance.layoutParams.height = desiredHeight
             balance.requestLayout()
         }
