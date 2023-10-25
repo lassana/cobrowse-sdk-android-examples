@@ -5,10 +5,12 @@ import android.view.KeyEvent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.View.OnKeyListener
+import android.view.View.VISIBLE
 import android.view.ViewGroup
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
 import android.widget.EditText
+import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
 import androidx.fragment.app.Fragment
@@ -37,6 +39,9 @@ class AgentPresentFragment : Fragment()  {
 
     private val mainLabel: TextView
         get() = binding.logoPresentationDescription
+
+    private val logo: ImageView
+        get() = binding.logoPresentation
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -106,6 +111,8 @@ class AgentPresentFragment : Fragment()  {
 
         mainLabel.text = if (isActive) getString(R.string.agent_present_welcome_you_are_presenting)
                          else getString(R.string.agent_present_welcome)
+
+        logo.visibility = if (isActive) VISIBLE else View.GONE
     }
 
     private fun updateUiWithAgentSession(error: Error?, session: Session?) {
