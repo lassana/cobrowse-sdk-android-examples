@@ -43,6 +43,7 @@ import io.cobrowse.sample.data.getAndroidLogTag
 import io.cobrowse.sample.data.model.Transaction
 import io.cobrowse.sample.databinding.FragmentTransactionsChartBinding
 import io.cobrowse.sample.ui.CobrowseViewModelFactory
+import io.cobrowse.sample.ui.collectCobrowseRedactedViews
 import io.cobrowse.sample.ui.onSizeChange
 
 /**
@@ -294,9 +295,11 @@ class TransactionsChartFragment : Fragment(), CobrowseIO.Redacted {
     }
 
     override fun redactedViews(): MutableList<View> {
-        return listOf<View>(
+        val redacted = mutableListOf<View>(
             binding.textviewBalance,
             binding.textviewTotalSpent)
-            .toMutableList()
+        // Also redact views from the bottom sheet navigation
+        redacted.addAll(navHostFragment.childFragmentManager.collectCobrowseRedactedViews())
+        return redacted
     }
 }

@@ -18,6 +18,7 @@ import androidx.navigation.ui.NavigationUI
 import io.cobrowse.CobrowseIO
 import io.cobrowse.sample.R
 import io.cobrowse.sample.ui.CobrowseViewModelFactory
+import io.cobrowse.sample.ui.collectCobrowseRedactedViews
 import io.cobrowse.sample.ui.login.LoginActivity
 
 /**
@@ -78,10 +79,6 @@ class MainActivity : AppCompatActivity(), CobrowseIO.Redacted {
     }
 
     override fun redactedViews(): MutableList<View> {
-        return navHostFragment.childFragmentManager.fragments
-            .filter { it is CobrowseIO.Redacted }
-            .flatMap { (it as CobrowseIO.Redacted).redactedViews() }
-            .filterNotNull()
-            .toMutableList()
+        return navHostFragment.childFragmentManager.collectCobrowseRedactedViews()
     }
 }
