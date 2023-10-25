@@ -44,7 +44,6 @@ class MainActivity : AppCompatActivity(), CobrowseIO.Redacted {
     private var menu: Menu? = null
 
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayoutCompat>
-    private var isTransactionListPresented = false
 
     private var backPressedCallback: OnBackPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
@@ -180,25 +179,28 @@ class MainActivity : AppCompatActivity(), CobrowseIO.Redacted {
     }
 
     private fun setUpBottomSheet(savedInstanceState: Bundle?) {
-        try {
-            if (isTransactionListPresented || savedInstanceState != null) {
-                // Fragment views are being constantly recreated during navigation,
-                // and we want to animate the list only on its very first appearance.
-                return
+        bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                bottomSheetBehavior.isHideable = newState == BottomSheetBehavior.STATE_HIDDEN
             }
-            bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
-                override fun onStateChanged(bottomSheet: View, newState: Int) {
-                    bottomSheetBehavior.isHideable = newState == BottomSheetBehavior.STATE_HIDDEN
+            override fun onSlide(bottomSheet: View, slideOffset: Float) { }
+        })
+        if (savedInstanceState != null) {
+            navHostFragmentMain.navController.currentDestination?.let {
+                if (it.id != navHostFragmentMain.navController.graph.startDestinationId) {
+                    bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+                } else if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_COLLAPSED) {
+                    bottomSheetBehavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
                 }
-                override fun onSlide(bottomSheet: View, slideOffset: Float) { }
-            })
+            }
+        } else {
+            // Activity might be recreated on configuration changes,
+            // and we want to animate the list only on its very first appearance.
             val duration = resources.getInteger(android.R.integer.config_longAnimTime).toLong() * 2
             binding.transactionsBottomSheet.postDelayed(duration) {
                 bottomSheetBehavior.halfExpandedRatio = 0.4f
                 bottomSheetBehavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
             }
-        } finally {
-            isTransactionListPresented = true
         }
     }
 
