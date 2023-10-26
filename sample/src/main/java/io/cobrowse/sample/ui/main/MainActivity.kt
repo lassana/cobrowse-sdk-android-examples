@@ -1,6 +1,8 @@
 package io.cobrowse.sample.ui.main
 
 import android.content.Intent
+import android.content.res.ColorStateList
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuInflater
@@ -11,8 +13,12 @@ import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.appcompat.widget.Toolbar
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.core.content.ContextCompat
 import androidx.core.view.MenuProvider
+import androidx.core.view.iterator
 import androidx.core.view.postDelayed
+import androidx.fragment.app.FragmentContainerView
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.NavController
@@ -20,13 +26,19 @@ import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
 import com.google.android.material.bottomsheet.BottomSheetBehavior
+import com.google.android.material.shape.MaterialShapeDrawable
+import com.google.android.material.shape.ShapeAppearanceModel
 import io.cobrowse.CobrowseIO
 import io.cobrowse.Session
 import io.cobrowse.sample.R
 import io.cobrowse.sample.databinding.ActivityMainBinding
 import io.cobrowse.sample.ui.CobrowseViewModelFactory
+import io.cobrowse.sample.ui.ToolbarNotchTreatment
+import io.cobrowse.sample.ui.actionBarSize
 import io.cobrowse.sample.ui.canPopNavigation
 import io.cobrowse.sample.ui.collectCobrowseRedactedViews
+import io.cobrowse.sample.ui.dpToPx
+import io.cobrowse.sample.ui.getThemeColor
 import io.cobrowse.sample.ui.login.LoginActivity
 import io.cobrowse.sample.ui.popNavigation
 
@@ -132,6 +144,7 @@ class MainActivity : AppCompatActivity(), CobrowseIO.Redacted {
         navController.addOnDestinationChangedListener { controller,  destination, arguments ->
             run {
                 updateBottomSheetState(savedInstanceState)
+                updateToolbarState()
             }
         }
     }
@@ -223,6 +236,49 @@ class MainActivity : AppCompatActivity(), CobrowseIO.Redacted {
         }
     }
 
+    private fun updateToolbarState() {
+        val mainDestinationId: Int? = navHostFragmentMain.navController.currentDestination?.id
+        val mainStartDestinationId: Int = navHostFragmentMain.navController.graph.startDestinationId
+
+        supportActionBar?.let {
+            val actionBarSize = this@MainActivity.actionBarSize()
+            val visibleMenuCount = menu?.iterator()?.asSequence()?.count { it.isVisible } ?: 0
+            if (mainDestinationId == mainStartDestinationId) {
+                binding.toolbar.apply {
+                    background = MaterialShapeDrawable(ShapeAppearanceModel
+                        .builder()
+                        .setBottomEdge(ToolbarNotchTreatment(
+                            toolbarHeight = actionBarSize.toFloat(),
+                            toolbarMenuWidth = if (visibleMenuCount >= 2)
+                                /* Two menu items: calculate its approximate width (refer to ActionMenuView.java) */
+                                ((actionBarSize - 4.dpToPx()) * visibleMenuCount - 4.dpToPx()).toFloat()
+                                /* One menu item: keep the toolbar square-ish */
+                                else actionBarSize.toFloat(),
+                            radius = 16.dpToPx().toFloat()))
+                        .build())
+                        .apply {
+                            tintList = ColorStateList.valueOf(
+                                this@MainActivity.getThemeColor(com.google.android.material.R.attr.colorPrimary))
+                        }
+                }
+                it.setDisplayShowTitleEnabled(false)
+                findViewById<FragmentContainerView>(R.id.nav_host_fragment).layoutParams?.let { lp ->
+                    if (lp is ConstraintLayout.LayoutParams) {
+                        lp.setMargins(0, 0, 0, 0)
+                    }
+                }
+            } else {
+                binding.toolbar.background = ColorDrawable(ContextCompat.getColor(this@MainActivity, R.color.primaryColor))
+                it.setDisplayShowTitleEnabled(true)
+                findViewById<FragmentContainerView>(R.id.nav_host_fragment).layoutParams?.let { lp ->
+                    if (lp is ConstraintLayout.LayoutParams) {
+                        lp.setMargins(0, actionBarSize, 0, 0)
+                    }
+                }
+            }
+        }
+    }
+
     private fun updateBackPressedCallback() {
         backPressedCallback.isEnabled =
             bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED
@@ -234,6 +290,7 @@ class MainActivity : AppCompatActivity(), CobrowseIO.Redacted {
     private fun updateUiWithSession(session: Session?) {
         menu?.findItem(R.id.end_cobrowse_session)?.let {
             it.isVisible = session?.isActive == true
+            updateToolbarState()
         }
     }
 

@@ -1,6 +1,10 @@
 package io.cobrowse.sample.ui
 
+import android.content.Context
+import android.content.res.Resources
+import android.util.TypedValue
 import android.view.View
+import androidx.annotation.AttrRes
 
 fun View.onSizeChange(callback: () -> Unit) {
     addOnLayoutChangeListener(object : View.OnLayoutChangeListener {
@@ -21,3 +25,20 @@ fun View.onSizeChange(callback: () -> Unit) {
         }
     })
 }
+
+fun Int.dpToPx(): Int = (toFloat() * Resources.getSystem().displayMetrics.density + 0.5f).toInt()
+
+fun Context.actionBarSize() : Int
+    = TypedValue()
+        .also {
+            this.theme.resolveAttribute(android.R.attr.actionBarSize, it, true)
+        }
+        .let {
+            TypedValue.complexToDimensionPixelSize(it.data, resources.displayMetrics)
+        }
+
+fun Context.getThemeColor(@AttrRes attrId: Int) =
+    TypedValue().let { typedValue ->
+        theme.resolveAttribute(attrId, typedValue, true)
+        typedValue.data
+    }
