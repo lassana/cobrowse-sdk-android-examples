@@ -61,6 +61,14 @@
                 app:popupTheme="@style/Theme.CobrowseioStandalone.PopupOverlay"
                 app:title="@string/fragment_transaction" />
 
+            <androidx.appcompat.widget.ActionMenuView
+                android:id="@+id/menuBottomSheet"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_gravity="end"
+                tools:background="#face80"
+                tools:layout_width="100dp" />
+
             <com.google.android.material.bottomsheet.BottomSheetDragHandleView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content" />

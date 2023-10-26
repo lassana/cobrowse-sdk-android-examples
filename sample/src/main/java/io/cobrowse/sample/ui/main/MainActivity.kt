@@ -11,12 +11,14 @@ import android.view.View
 import android.widget.FrameLayout
 import androidx.activity.OnBackPressedCallback
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.view.menu.MenuBuilder
+import androidx.appcompat.widget.ActionMenuView
 import androidx.appcompat.widget.LinearLayoutCompat
 import androidx.appcompat.widget.Toolbar
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.content.ContextCompat
+import androidx.core.graphics.drawable.DrawableCompat
 import androidx.core.view.MenuProvider
-import androidx.core.view.iterator
 import androidx.core.view.postDelayed
 import androidx.fragment.app.FragmentContainerView
 import androidx.lifecycle.Observer
@@ -54,6 +56,7 @@ class MainActivity : AppCompatActivity(), CobrowseIO.Redacted {
     private lateinit var navHostFragmentNested: NavHostFragment
 
     private var menu: Menu? = null
+    private var menuBottomSheet: Menu? = null
 
     private lateinit var bottomSheetBehavior: BottomSheetBehavior<LinearLayoutCompat>
 
@@ -100,7 +103,8 @@ class MainActivity : AppCompatActivity(), CobrowseIO.Redacted {
         setUpMenu()
 
         viewModel.cobrowseDelegate.current.observe(this@MainActivity, Observer {
-            updateUiWithSession(it)
+            updateMainMenu()
+            updateBottomSheetMenu()
         })
 
         setUpNavigation(savedInstanceState)
@@ -120,7 +124,7 @@ class MainActivity : AppCompatActivity(), CobrowseIO.Redacted {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
                 menuInflater.inflate(R.menu.menu_main_host, menu)
                 this@MainActivity.menu = menu
-                updateUiWithSession(viewModel.cobrowseDelegate.current.value)
+                updateMainMenu()
             }
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
                 if (menuItem.itemId == R.id.end_cobrowse_session) {
@@ -130,6 +134,26 @@ class MainActivity : AppCompatActivity(), CobrowseIO.Redacted {
                 return false
             }
         })
+
+        // The bottom sheet has its own toolbar and its own menu
+        val actions = binding.menuBottomSheet
+        actions.setOnMenuItemClickListener(object : ActionMenuView.OnMenuItemClickListener {
+            override fun onMenuItemClick(menuItem: MenuItem): Boolean {
+                if (menuItem.itemId == R.id.end_cobrowse_session) {
+                    viewModel.endCobrowseSession()
+                    return true
+                }
+                return false
+            }
+        })
+        menuInflater.inflate(R.menu.menu_main_host, actions.menu as MenuBuilder)
+        actions.menu.findItem(R.id.end_cobrowse_session)?.let {
+            it.icon?.constantState?.newDrawable()?.let { newDrawable ->
+                DrawableCompat.setTint(newDrawable, ContextCompat.getColor(this, R.color.primaryColor))
+                it.icon = newDrawable
+            }
+        }
+        menuBottomSheet = actions.menu
     }
 
     private fun setUpNavigation(savedInstanceState: Bundle?) {
@@ -184,6 +208,7 @@ class MainActivity : AppCompatActivity(), CobrowseIO.Redacted {
         bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
                 bottomSheetBehavior.isHideable = newState == BottomSheetBehavior.STATE_HIDDEN
+                updateBottomSheetMenu()
             }
             override fun onSlide(bottomSheet: View, slideOffset: Float) { }
         })
@@ -242,8 +267,11 @@ class MainActivity : AppCompatActivity(), CobrowseIO.Redacted {
 
         supportActionBar?.let {
             val actionBarSize = this@MainActivity.actionBarSize()
-            val visibleMenuCount = menu?.iterator()?.asSequence()?.count { it.isVisible } ?: 0
             if (mainDestinationId == mainStartDestinationId) {
+                val visibleMenuCount =
+                    // The line below may return obsolete results
+                    //menu?.iterator()?.asSequence()?.count { it.isVisible } ?: 0
+                    if (menu?.findItem(R.id.end_cobrowse_session)?.isVisible == true) 2 else 1
                 binding.toolbar.apply {
                     background = MaterialShapeDrawable(ShapeAppearanceModel
                         .builder()
@@ -287,10 +315,19 @@ class MainActivity : AppCompatActivity(), CobrowseIO.Redacted {
                     || navHostFragmentMain.canPopNavigation()
     }
 
-    private fun updateUiWithSession(session: Session?) {
+    private fun updateMainMenu() {
+        val session: Session? = viewModel.cobrowseDelegate.current.value
         menu?.findItem(R.id.end_cobrowse_session)?.let {
             it.isVisible = session?.isActive == true
             updateToolbarState()
+        }
+    }
+
+    private fun updateBottomSheetMenu() {
+        val session: Session? = viewModel.cobrowseDelegate.current.value
+        menuBottomSheet?.findItem(R.id.end_cobrowse_session)?.let {
+            it.isVisible = session?.isActive == true
+                    && bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED
         }
     }
 
