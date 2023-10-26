@@ -23,6 +23,7 @@ class ToolbarNotchTreatment(
     ) {
         if (length <= 0f) {
             super.getEdgePath(length, center, interpolation, shapePath)
+            return
         }
 
         val horizontalAnchor = toolbarMenuWidth
