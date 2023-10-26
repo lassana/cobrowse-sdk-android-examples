@@ -53,7 +53,7 @@ class MainActivity : AppCompatActivity(), CobrowseIO.Redacted {
     private lateinit var binding: ActivityMainBinding
 
     private lateinit var navHostFragmentMain: NavHostFragment
-    private lateinit var navHostFragmentNested: NavHostFragment
+    private lateinit var navHostFragmentBottomSheet: NavHostFragment
 
     private var menu: Menu? = null
     private var menuBottomSheet: Menu? = null
@@ -65,7 +65,7 @@ class MainActivity : AppCompatActivity(), CobrowseIO.Redacted {
             if (navHostFragmentMain.popNavigation()) {
                 return
             }
-            if (navHostFragmentNested.popNavigation()) {
+            if (navHostFragmentBottomSheet.popNavigation()) {
                 return
             }
             when (bottomSheetBehavior.state) {
@@ -88,7 +88,7 @@ class MainActivity : AppCompatActivity(), CobrowseIO.Redacted {
         binding = ActivityMainBinding.inflate(layoutInflater)
         bottomSheetBehavior = BottomSheetBehavior.from(binding.transactionsBottomSheet)
         navHostFragmentMain = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
-        navHostFragmentNested = supportFragmentManager.findFragmentById(R.id.bottom_sheet_nav_host_fragment) as NavHostFragment
+        navHostFragmentBottomSheet = supportFragmentManager.findFragmentById(R.id.bottom_sheet_nav_host_fragment) as NavHostFragment
         setContentView(binding.root)
 
         viewModel = ViewModelProvider(this, CobrowseViewModelFactory())
@@ -108,7 +108,7 @@ class MainActivity : AppCompatActivity(), CobrowseIO.Redacted {
         })
 
         setUpNavigation(savedInstanceState)
-        setUpNestedNavigation(savedInstanceState)
+        setUpBottomSheetNavigation(savedInstanceState)
         setUpBottomSheet(savedInstanceState)
 
         setUpBackPressedCallback()
@@ -173,8 +173,8 @@ class MainActivity : AppCompatActivity(), CobrowseIO.Redacted {
         }
     }
 
-    private fun setUpNestedNavigation(savedInstanceState: Bundle?) {
-        val navController: NavController = navHostFragmentNested.navController
+    private fun setUpBottomSheetNavigation(savedInstanceState: Bundle?) {
+        val navController: NavController = navHostFragmentBottomSheet.navController
         val appBarConfiguration = AppBarConfiguration(navController.graph)
         val toolbar = binding.toolbarBottomSheet
 
@@ -192,7 +192,7 @@ class MainActivity : AppCompatActivity(), CobrowseIO.Redacted {
         navHostFragmentMain.navController.addOnDestinationChangedListener { _, _, _ ->
             run(MainActivity::updateBackPressedCallback)
         }
-        navHostFragmentNested.navController.addOnDestinationChangedListener { _,  _, _ ->
+        navHostFragmentBottomSheet.navController.addOnDestinationChangedListener { _,  _, _ ->
             run(MainActivity::updateBackPressedCallback)
         }
 
@@ -228,12 +228,12 @@ class MainActivity : AppCompatActivity(), CobrowseIO.Redacted {
     private fun updateBottomSheetState(savedInstanceState: Bundle?) {
         val mainDestinationId: Int? = navHostFragmentMain.navController.currentDestination?.id
         val mainStartDestinationId: Int = navHostFragmentMain.navController.graph.startDestinationId
-        val nestedDestinationId: Int? = navHostFragmentNested.navController.currentDestination?.id
-        val nestedStartDestinationId: Int = navHostFragmentNested.navController.graph.startDestinationId
+        val bottomSheetDestinationId: Int? = navHostFragmentBottomSheet.navController.currentDestination?.id
+        val bottomSheetStartDestinationId: Int = navHostFragmentBottomSheet.navController.graph.startDestinationId
 
-        // The nested toolbar has extra margins when the transactions list is shown
+        // The bottom sheet toolbar has extra margins when the transactions list is shown
         with(binding.toolbarBottomSheet.layoutParams as FrameLayout.LayoutParams) {
-            if (nestedDestinationId == nestedStartDestinationId) {
+            if (bottomSheetDestinationId == bottomSheetStartDestinationId) {
                 setMargins(resources.getDimension(R.dimen.list_horizontal_margin).toInt(), 0,
                            resources.getDimension(R.dimen.list_horizontal_margin).toInt(), 0)
             } else {
@@ -252,8 +252,8 @@ class MainActivity : AppCompatActivity(), CobrowseIO.Redacted {
                 bottomSheetBehavior.state = savedInstanceState.getInt("bottomSheetBehaviorState",
                                                                       BottomSheetBehavior.STATE_HALF_EXPANDED)
             }
-        } else if (nestedDestinationId != nestedStartDestinationId) {
-            // Expand the bottom sheet if the nested navigation is active
+        } else if (bottomSheetDestinationId != bottomSheetStartDestinationId) {
+            // Expand the bottom sheet if its navigation is active
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
         } else if (bottomSheetBehavior.isHideable) {
             // If no navigation is active, just make sure the bottom sheet is shown
@@ -311,7 +311,7 @@ class MainActivity : AppCompatActivity(), CobrowseIO.Redacted {
         backPressedCallback.isEnabled =
             bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED
                     || bottomSheetBehavior.state == BottomSheetBehavior.STATE_HALF_EXPANDED
-                    || navHostFragmentNested.canPopNavigation()
+                    || navHostFragmentBottomSheet.canPopNavigation()
                     || navHostFragmentMain.canPopNavigation()
     }
 
@@ -334,7 +334,7 @@ class MainActivity : AppCompatActivity(), CobrowseIO.Redacted {
     override fun redactedViews(): MutableList<View> {
         val redacted = navHostFragmentMain.childFragmentManager.collectCobrowseRedactedViews()
         // Also redact views from the bottom sheet navigation
-        redacted.addAll(navHostFragmentNested.childFragmentManager.collectCobrowseRedactedViews())
+        redacted.addAll(navHostFragmentBottomSheet.childFragmentManager.collectCobrowseRedactedViews())
         return redacted
     }
 }
