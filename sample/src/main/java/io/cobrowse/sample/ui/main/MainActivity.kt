@@ -159,7 +159,7 @@ class MainActivity : AppCompatActivity(), CobrowseIO.Redacted {
     private fun setUpNavigation(savedInstanceState: Bundle?) {
         val navController: NavController = navHostFragmentMain.navController
         val appBarConfiguration = AppBarConfiguration(navController.graph)
-        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        val toolbar = binding.toolbar
         setSupportActionBar(toolbar)
 
         NavigationUI.setupActionBarWithNavController(this, navController, appBarConfiguration)
@@ -264,44 +264,43 @@ class MainActivity : AppCompatActivity(), CobrowseIO.Redacted {
     private fun updateToolbarState() {
         val mainDestinationId: Int? = navHostFragmentMain.navController.currentDestination?.id
         val mainStartDestinationId: Int = navHostFragmentMain.navController.graph.startDestinationId
+        val fragmentContainerView: FragmentContainerView = findViewById(R.id.nav_host_fragment)
+        val actionBarSize: Int = this@MainActivity.actionBarSize()
 
-        supportActionBar?.let {
-            val actionBarSize = this@MainActivity.actionBarSize()
-            if (mainDestinationId == mainStartDestinationId) {
-                val visibleMenuCount =
-                    // The line below may return obsolete results
-                    //menu?.iterator()?.asSequence()?.count { it.isVisible } ?: 0
-                    if (menu?.findItem(R.id.end_cobrowse_session)?.isVisible == true) 2 else 1
-                binding.toolbar.apply {
-                    background = MaterialShapeDrawable(ShapeAppearanceModel
-                        .builder()
-                        .setBottomEdge(ToolbarNotchTreatment(
-                            toolbarHeight = actionBarSize.toFloat(),
-                            toolbarMenuWidth = if (visibleMenuCount >= 2)
-                                /* Two menu items: calculate its approximate width (refer to ActionMenuView.java) */
-                                ((actionBarSize - 4.dpToPx()) * visibleMenuCount - 4.dpToPx()).toFloat()
-                                /* One menu item: keep the toolbar square-ish */
-                                else actionBarSize.toFloat(),
-                            radius = 16.dpToPx().toFloat()))
-                        .build())
-                        .apply {
-                            tintList = ColorStateList.valueOf(
-                                this@MainActivity.getThemeColor(com.google.android.material.R.attr.colorPrimary))
-                        }
-                }
-                it.setDisplayShowTitleEnabled(false)
-                findViewById<FragmentContainerView>(R.id.nav_host_fragment).layoutParams?.let { lp ->
-                    if (lp is ConstraintLayout.LayoutParams) {
-                        lp.setMargins(0, 0, 0, 0)
+        if (mainDestinationId == mainStartDestinationId) {
+            val visibleMenuCount =
+                // The line below may return obsolete results
+                //menu?.iterator()?.asSequence()?.count { it.isVisible } ?: 0
+                if (menu?.findItem(R.id.end_cobrowse_session)?.isVisible == true) 2 else 1
+            binding.toolbar.apply {
+                background = MaterialShapeDrawable(ShapeAppearanceModel
+                    .builder()
+                    .setBottomEdge(ToolbarNotchTreatment(
+                        toolbarHeight = actionBarSize.toFloat(),
+                        toolbarMenuWidth = if (visibleMenuCount >= 2)
+                            /* Two menu items: calculate its approximate width (refer to ActionMenuView.java) */
+                            ((actionBarSize - 4.dpToPx()) * visibleMenuCount - 4.dpToPx()).toFloat()
+                            /* One menu item: keep the toolbar square-ish */
+                            else actionBarSize.toFloat(),
+                        radius = 16.dpToPx().toFloat()))
+                    .build())
+                    .apply {
+                        tintList = ColorStateList.valueOf(
+                            this@MainActivity.getThemeColor(com.google.android.material.R.attr.colorPrimary))
                     }
+            }
+            supportActionBar?.setDisplayShowTitleEnabled(false)
+            fragmentContainerView.layoutParams?.let { lp ->
+                if (lp is ConstraintLayout.LayoutParams) {
+                    lp.setMargins(0, 0, 0, 0)
                 }
-            } else {
-                binding.toolbar.background = ColorDrawable(ContextCompat.getColor(this@MainActivity, R.color.primaryColor))
-                it.setDisplayShowTitleEnabled(true)
-                findViewById<FragmentContainerView>(R.id.nav_host_fragment).layoutParams?.let { lp ->
-                    if (lp is ConstraintLayout.LayoutParams) {
-                        lp.setMargins(0, actionBarSize, 0, 0)
-                    }
+            }
+        } else {
+            binding.toolbar.background = ColorDrawable(ContextCompat.getColor(this@MainActivity, R.color.primaryColor))
+            supportActionBar?.setDisplayShowTitleEnabled(true)
+            fragmentContainerView.layoutParams?.let { lp ->
+                if (lp is ConstraintLayout.LayoutParams) {
+                    lp.setMargins(0, actionBarSize, 0, 0)
                 }
             }
         }
