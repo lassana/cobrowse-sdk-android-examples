@@ -5,6 +5,7 @@
     android:id="@+id/agent_present"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginTop="?attr/actionBarSize"
     tools:context=".ui.main.AgentPresentFragment">
 
     <View

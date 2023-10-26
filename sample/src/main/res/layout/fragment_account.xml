@@ -6,6 +6,7 @@
     android:id="@+id/account"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:layout_marginTop="?attr/actionBarSize"
     tools:context=".ui.main.AccountFragment">
 
     <androidx.appcompat.widget.AppCompatImageView

@@ -263,10 +263,9 @@ class MainActivity : AppCompatActivity(), CobrowseIO.Redacted {
     private fun updateToolbarState() {
         val mainDestinationId: Int? = navHostFragmentMain.navController.currentDestination?.id
         val mainStartDestinationId: Int = navHostFragmentMain.navController.graph.startDestinationId
-        val fragmentContainerView: FragmentContainerView = findViewById(R.id.nav_host_fragment)
-        val actionBarSize: Int = this@MainActivity.actionBarSize()
 
         if (mainDestinationId == mainStartDestinationId) {
+            val actionBarSize: Int = this@MainActivity.actionBarSize()
             val visibleMenuCount =
                 // The line below may return obsolete results
                 //menu?.iterator()?.asSequence()?.count { it.isVisible } ?: 0
@@ -289,19 +288,9 @@ class MainActivity : AppCompatActivity(), CobrowseIO.Redacted {
                     }
             }
             supportActionBar?.setDisplayShowTitleEnabled(false)
-            fragmentContainerView.layoutParams?.let { lp ->
-                if (lp is ConstraintLayout.LayoutParams) {
-                    lp.setMargins(0, 0, 0, 0)
-                }
-            }
         } else {
             binding.toolbar.background = ColorDrawable(ContextCompat.getColor(this@MainActivity, R.color.primaryColor))
             supportActionBar?.setDisplayShowTitleEnabled(true)
-            fragmentContainerView.layoutParams?.let { lp ->
-                if (lp is ConstraintLayout.LayoutParams) {
-                    lp.setMargins(0, actionBarSize, 0, 0)
-                }
-            }
         }
     }
 
