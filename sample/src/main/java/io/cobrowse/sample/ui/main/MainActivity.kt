@@ -47,8 +47,10 @@ class MainActivity : AppCompatActivity(), CobrowseIO.Redacted {
 
     private var backPressedCallback: OnBackPressedCallback = object : OnBackPressedCallback(true) {
         override fun handleOnBackPressed() {
-            if (bottomSheetBehavior.state != BottomSheetBehavior.STATE_HIDDEN
-                && navHostFragmentNested.popNavigation()) {
+            if (navHostFragmentMain.popNavigation()) {
+                return
+            }
+            if (navHostFragmentNested.popNavigation()) {
                 return
             }
             when (bottomSheetBehavior.state) {
@@ -60,10 +62,7 @@ class MainActivity : AppCompatActivity(), CobrowseIO.Redacted {
                     bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
                     return
                 }
-                else -> invalidateBackPressedCallback()
-            }
-            if (navHostFragmentMain.popNavigation()) {
-                return
+                else -> updateBackPressedCallback()
             }
         }
     }
@@ -72,6 +71,9 @@ class MainActivity : AppCompatActivity(), CobrowseIO.Redacted {
         super.onCreate(savedInstanceState)
 
         binding = ActivityMainBinding.inflate(layoutInflater)
+        bottomSheetBehavior = BottomSheetBehavior.from(binding.transactionsBottomSheet)
+        navHostFragmentMain = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+        navHostFragmentNested = supportFragmentManager.findFragmentById(R.id.bottom_sheet_nav_host_fragment) as NavHostFragment
         setContentView(binding.root)
 
         viewModel = ViewModelProvider(this, CobrowseViewModelFactory())
@@ -83,17 +85,22 @@ class MainActivity : AppCompatActivity(), CobrowseIO.Redacted {
             return
         }
 
-        bottomSheetBehavior = BottomSheetBehavior.from(binding.transactionsBottomSheet)
         setUpMenu()
 
         viewModel.cobrowseDelegate.current.observe(this@MainActivity, Observer {
             updateUiWithSession(it)
         })
 
-        setUpNavigation()
-        setUpNestedNavigation()
-        setUpBackPressedCallback()
+        setUpNavigation(savedInstanceState)
+        setUpNestedNavigation(savedInstanceState)
         setUpBottomSheet(savedInstanceState)
+
+        setUpBackPressedCallback()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putInt("bottomSheetBehaviorState", bottomSheetBehavior.state)
     }
 
     private fun setUpMenu() {
@@ -113,8 +120,7 @@ class MainActivity : AppCompatActivity(), CobrowseIO.Redacted {
         })
     }
 
-    private fun setUpNavigation() {
-        navHostFragmentMain = supportFragmentManager.findFragmentById(R.id.nav_host_fragment) as NavHostFragment
+    private fun setUpNavigation(savedInstanceState: Bundle?) {
         val navController: NavController = navHostFragmentMain.navController
         val appBarConfiguration = AppBarConfiguration(navController.graph)
         val toolbar = findViewById<Toolbar>(R.id.toolbar)
@@ -125,20 +131,12 @@ class MainActivity : AppCompatActivity(), CobrowseIO.Redacted {
 
         navController.addOnDestinationChangedListener { controller,  destination, arguments ->
             run {
-                if (destination.id == navController.graph.startDestinationId) {
-                    if (bottomSheetBehavior.isHideable) {
-                        bottomSheetBehavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
-                    }
-                } else {
-                    bottomSheetBehavior.isHideable = true
-                    bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-                }
+                updateBottomSheetState(savedInstanceState)
             }
         }
     }
 
-    private fun setUpNestedNavigation() {
-        navHostFragmentNested = supportFragmentManager.findFragmentById(R.id.bottom_sheet_nav_host_fragment) as NavHostFragment
+    private fun setUpNestedNavigation(savedInstanceState: Bundle?) {
         val navController: NavController = navHostFragmentNested.navController
         val appBarConfiguration = AppBarConfiguration(navController.graph)
         val toolbar = binding.toolbarBottomSheet
@@ -146,16 +144,7 @@ class MainActivity : AppCompatActivity(), CobrowseIO.Redacted {
         NavigationUI.setupWithNavController(toolbar, navController, appBarConfiguration)
         navController.addOnDestinationChangedListener { controller,  destination, arguments ->
             run {
-                if (destination.id == navController.graph.startDestinationId) {
-                    with(toolbar.layoutParams as FrameLayout.LayoutParams) {
-                        setMargins(resources.getDimension(R.dimen.list_horizontal_margin).toInt(), 0, resources.getDimension(R.dimen.list_horizontal_margin).toInt(), 0)
-                    }
-                } else {
-                    with(toolbar.layoutParams as FrameLayout.LayoutParams) {
-                        setMargins(0, 0, 0, 0)
-                    }
-                    bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
-                }
+                updateBottomSheetState(savedInstanceState)
             }
         }
     }
@@ -164,15 +153,15 @@ class MainActivity : AppCompatActivity(), CobrowseIO.Redacted {
         onBackPressedDispatcher.addCallback(this, backPressedCallback)
 
         navHostFragmentMain.navController.addOnDestinationChangedListener { _, _, _ ->
-            run(MainActivity::invalidateBackPressedCallback)
+            run(MainActivity::updateBackPressedCallback)
         }
         navHostFragmentNested.navController.addOnDestinationChangedListener { _,  _, _ ->
-            run(MainActivity::invalidateBackPressedCallback)
+            run(MainActivity::updateBackPressedCallback)
         }
 
         bottomSheetBehavior.addBottomSheetCallback(object : BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
-                invalidateBackPressedCallback()
+                updateBackPressedCallback()
             }
             override fun onSlide(bottomSheet: View, slideOffset: Float) { }
         })
@@ -186,13 +175,7 @@ class MainActivity : AppCompatActivity(), CobrowseIO.Redacted {
             override fun onSlide(bottomSheet: View, slideOffset: Float) { }
         })
         if (savedInstanceState != null) {
-            navHostFragmentMain.navController.currentDestination?.let {
-                if (it.id != navHostFragmentMain.navController.graph.startDestinationId) {
-                    bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
-                } else if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_COLLAPSED) {
-                    bottomSheetBehavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
-                }
-            }
+            updateBottomSheetState(savedInstanceState)
         } else {
             // Activity might be recreated on configuration changes,
             // and we want to animate the list only on its very first appearance.
@@ -204,7 +187,43 @@ class MainActivity : AppCompatActivity(), CobrowseIO.Redacted {
         }
     }
 
-    private fun invalidateBackPressedCallback() {
+    private fun updateBottomSheetState(savedInstanceState: Bundle?) {
+        val mainDestinationId: Int? = navHostFragmentMain.navController.currentDestination?.id
+        val mainStartDestinationId: Int = navHostFragmentMain.navController.graph.startDestinationId
+        val nestedDestinationId: Int? = navHostFragmentNested.navController.currentDestination?.id
+        val nestedStartDestinationId: Int = navHostFragmentNested.navController.graph.startDestinationId
+
+        // The nested toolbar has extra margins when the transactions list is shown
+        with(binding.toolbarBottomSheet.layoutParams as FrameLayout.LayoutParams) {
+            if (nestedDestinationId == nestedStartDestinationId) {
+                setMargins(resources.getDimension(R.dimen.list_horizontal_margin).toInt(), 0,
+                           resources.getDimension(R.dimen.list_horizontal_margin).toInt(), 0)
+            } else {
+                setMargins(0, 0, 0, 0)
+            }
+        }
+
+        if (mainDestinationId != mainStartDestinationId) {
+            // No bottom sheet when the main navigation is active
+            bottomSheetBehavior.isHideable = true
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+        } else if (bottomSheetBehavior.state == BottomSheetBehavior.STATE_COLLAPSED) {
+            // AndroidX automatically collapses the bottom sheet on configuration changes.
+            // If that's the case, expand the bottom sheet to the last remembered state.
+            if (savedInstanceState != null) {
+                bottomSheetBehavior.state = savedInstanceState.getInt("bottomSheetBehaviorState",
+                                                                      BottomSheetBehavior.STATE_HALF_EXPANDED)
+            }
+        } else if (nestedDestinationId != nestedStartDestinationId) {
+            // Expand the bottom sheet if the nested navigation is active
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+        } else if (bottomSheetBehavior.isHideable) {
+            // If no navigation is active, just make sure the bottom sheet is shown
+            bottomSheetBehavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
+        }
+    }
+
+    private fun updateBackPressedCallback() {
         backPressedCallback.isEnabled =
             bottomSheetBehavior.state == BottomSheetBehavior.STATE_EXPANDED
                     || bottomSheetBehavior.state == BottomSheetBehavior.STATE_HALF_EXPANDED
