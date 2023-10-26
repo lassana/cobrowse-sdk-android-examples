@@ -6,6 +6,9 @@ import android.util.TypedValue
 import android.view.View
 import androidx.annotation.AttrRes
 
+/**
+ * Extension to monitor view measured size changes.
+ */
 fun View.onSizeChange(callback: () -> Unit) {
     addOnLayoutChangeListener(object : View.OnLayoutChangeListener {
         override fun onLayoutChange(
@@ -26,8 +29,14 @@ fun View.onSizeChange(callback: () -> Unit) {
     })
 }
 
+/**
+ * Convert a density-independent pixels value to pixels.
+ */
 fun Int.dpToPx(): Int = (toFloat() * Resources.getSystem().displayMetrics.density + 0.5f).toInt()
 
+/**
+ * Gets the current toolbar height.
+ */
 fun Context.actionBarSize() : Int
     = TypedValue()
         .also {
@@ -37,6 +46,9 @@ fun Context.actionBarSize() : Int
             TypedValue.complexToDimensionPixelSize(it.data, resources.displayMetrics)
         }
 
+/**
+ * Gets a theme-based color.
+ */
 fun Context.getThemeColor(@AttrRes attrId: Int) =
     TypedValue().let { typedValue ->
         theme.resolveAttribute(attrId, typedValue, true)
