@@ -20,6 +20,6 @@ fun EditText.afterTextChanged(afterTextChanged: (String) -> Unit) {
 }
 
 /**
- * Checks if [EditText] has some text typed in.
+ * Checks if [EditText] has some text typed in or not.
  */
-fun EditText.isTextEmpty(): Boolean = text == null || text.isEmpty()
+fun EditText.isTextEmpty(): Boolean = text.isNullOrEmpty()
