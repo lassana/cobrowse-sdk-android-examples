@@ -37,6 +37,7 @@ class MainApplication : Application() {
             start()
         }
 
+        // If using Firebase Messaging to start sessions please include your own `google-services.json`
         if (FirebaseApp.getApps(this).size > 0) {
             FirebaseMessaging.getInstance().token.addOnCompleteListener(OnCompleteListener { task ->
                 if (!task.isSuccessful) {
@@ -46,7 +47,7 @@ class MainApplication : Application() {
                 CobrowseIO.instance().setDeviceToken(task.result)
             })
         } else {
-            Log.e(TAG, "Firebase app is not initialized. Did you copy your `google-services.json` file?")
+            Log.w(TAG, "Firebase app is not initialized. Did you copy your `google-services.json` file?")
         }
     }
 }
