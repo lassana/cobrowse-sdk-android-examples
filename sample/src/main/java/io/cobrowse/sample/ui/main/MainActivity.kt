@@ -32,12 +32,14 @@ import com.google.android.material.shape.ShapeAppearanceModel
 import io.cobrowse.CobrowseIO
 import io.cobrowse.Session
 import io.cobrowse.sample.R
+import io.cobrowse.sample.data.CobrowseSessionDelegate
 import io.cobrowse.sample.databinding.ActivityMainBinding
 import io.cobrowse.sample.ui.CobrowseViewModelFactory
 import io.cobrowse.sample.ui.ToolbarNotchTreatment
 import io.cobrowse.sample.ui.actionBarSize
 import io.cobrowse.sample.ui.canPopNavigation
 import io.cobrowse.sample.ui.collectCobrowseRedactedViews
+import io.cobrowse.sample.ui.collectCobrowseUnredactedViews
 import io.cobrowse.sample.ui.dpToPx
 import io.cobrowse.sample.ui.getThemeColor
 import io.cobrowse.sample.ui.login.LoginActivity
@@ -46,7 +48,7 @@ import io.cobrowse.sample.ui.popNavigation
 /**
  * Activity that hosts all fragments when user is logged in.
  */
-class MainActivity : AppCompatActivity(), CobrowseIO.Redacted {
+class MainActivity : AppCompatActivity(), CobrowseIO.Redacted, CobrowseIO.Unredacted {
 
     private lateinit var viewModel: MainViewModel
     private lateinit var binding: ActivityMainBinding
@@ -320,8 +322,23 @@ class MainActivity : AppCompatActivity(), CobrowseIO.Redacted {
 
     override fun redactedViews(): MutableList<View> {
         val redacted = navHostFragmentMain.childFragmentManager.collectCobrowseRedactedViews()
-        // Also redact views from the bottom sheet navigation
+        // Also redact views from the bottom sheet navigation (if any)
         redacted.addAll(navHostFragmentBottomSheet.childFragmentManager.collectCobrowseRedactedViews())
         return redacted
+    }
+
+    override fun unredactedViews(): MutableList<View> {
+        return if (CobrowseSessionDelegate.isRedactionByDefaultEnabled(this)) {
+            val unredacted = navHostFragmentMain.childFragmentManager.collectCobrowseUnredactedViews()
+            // Unredact the main toolbar
+            unredacted.add(binding.toolbar)
+            // Also unredact views from the bottom sheet navigation (if any)
+            unredacted.addAll(navHostFragmentBottomSheet.childFragmentManager.collectCobrowseUnredactedViews())
+            // Also unredact the bottom sheet toolbar
+            unredacted.add(binding.toolbarHost)
+            unredacted
+        } else {
+            mutableListOf()
+        }
     }
 }

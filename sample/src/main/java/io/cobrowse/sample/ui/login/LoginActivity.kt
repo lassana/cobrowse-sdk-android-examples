@@ -18,6 +18,7 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import io.cobrowse.CobrowseIO
 import io.cobrowse.sample.R
+import io.cobrowse.sample.data.CobrowseSessionDelegate
 import io.cobrowse.sample.databinding.ActivityLoginBinding
 import io.cobrowse.sample.ui.CobrowseViewModelFactory
 import io.cobrowse.sample.ui.afterTextChanged
@@ -26,7 +27,7 @@ import io.cobrowse.sample.ui.main.MainActivity
 /**
  * Activity with the login form.
  */
-class LoginActivity : AppCompatActivity(), CobrowseIO.Redacted {
+class LoginActivity : AppCompatActivity(), CobrowseIO.Redacted, CobrowseIO.Unredacted {
 
     private lateinit var loginViewModel: LoginViewModel
     private lateinit var binding: ActivityLoginBinding
@@ -163,5 +164,16 @@ class LoginActivity : AppCompatActivity(), CobrowseIO.Redacted {
         return mutableListOf(
             binding.username,
             binding.password)
+    }
+
+    override fun unredactedViews(): MutableList<View> {
+        return if (CobrowseSessionDelegate.isRedactionByDefaultEnabled(this))
+            mutableListOf(
+                binding.logo,
+                binding.welcome,
+                binding.login,
+                binding.loading
+            )
+            else mutableListOf()
     }
 }

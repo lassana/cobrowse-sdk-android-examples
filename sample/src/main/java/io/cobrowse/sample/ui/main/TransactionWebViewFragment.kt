@@ -15,7 +15,9 @@ import android.webkit.WebViewClient
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.Navigation
+import io.cobrowse.CobrowseIO
 import io.cobrowse.sample.R
+import io.cobrowse.sample.data.CobrowseSessionDelegate
 import io.cobrowse.sample.data.getAndroidLogTag
 import io.cobrowse.sample.databinding.FragmentTransactionWebviewBinding
 import io.cobrowse.sample.ui.CobrowseViewModelFactory
@@ -23,7 +25,7 @@ import io.cobrowse.sample.ui.CobrowseViewModelFactory
 /**
  * WebView-based fragment that can display information about certain transaction.
  */
-class TransactionWebViewFragment : Fragment() {
+class TransactionWebViewFragment : Fragment(), CobrowseIO.Unredacted {
 
     @Suppress("PrivatePropertyName")
     private val Any.TAG: String
@@ -98,5 +100,11 @@ class TransactionWebViewFragment : Fragment() {
                 Bundle().also {
                     it.putString("url", uri.toString())
                 })
+    }
+
+    override fun unredactedViews(): MutableList<View> {
+        return if (CobrowseSessionDelegate.isRedactionByDefaultEnabled(requireContext()))
+            mutableListOf(binding.webView)
+            else mutableListOf()
     }
 }

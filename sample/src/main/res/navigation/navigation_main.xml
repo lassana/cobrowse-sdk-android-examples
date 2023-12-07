@@ -31,6 +31,13 @@
             app:exitAnim="@anim/slide_out_left"
             app:popEnterAnim="@anim/slide_in_left"
             app:popExitAnim="@anim/slide_out_right" />
+        <action
+            android:id="@+id/action_accountFragment_to_settingsFragment"
+            app:destination="@id/settingsFragment"
+            app:enterAnim="@anim/slide_in_right"
+            app:exitAnim="@anim/slide_out_left"
+            app:popEnterAnim="@anim/slide_in_left"
+            app:popExitAnim="@anim/slide_out_right" />
     </fragment>
 
     <fragment
@@ -38,5 +45,10 @@
         android:name="io.cobrowse.sample.ui.main.AgentPresentFragment"
         android:label="@string/fragment_agent_present_title"
         tools:layout="@layout/fragment_agent_present" />
+
+    <fragment
+        android:id="@+id/settingsFragment"
+        android:name="io.cobrowse.sample.ui.settings.SettingsFragment"
+        android:label="@string/settings_category_cobrowse" />
 
 </navigation>
