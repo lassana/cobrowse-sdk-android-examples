@@ -12,6 +12,7 @@ import io.cobrowse.sample.ui.main.MainViewModel
 import io.cobrowse.sample.ui.main.TransactionViewModel
 import io.cobrowse.sample.ui.main.TransactionsChartViewModel
 import io.cobrowse.sample.ui.main.TransactionsViewModel
+import io.cobrowse.sample.ui.settings.SettingsViewModel
 
 /**
  * View-Model provider factory to instantiate all View-Models used in the app.
@@ -51,6 +52,9 @@ class CobrowseViewModelFactory : ViewModelProvider.Factory {
             }
             modelClass.isAssignableFrom(TransactionViewModel::class.java) -> {
                 TransactionViewModel() as T
+            }
+            modelClass.isAssignableFrom(SettingsViewModel::class.java) -> {
+                SettingsViewModel() as T
             }
             else -> throw IllegalArgumentException("Unknown ViewModel class")
         }

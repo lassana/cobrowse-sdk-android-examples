@@ -31,4 +31,10 @@
     <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
     <string name="default_notification_channel_name">Default Notifications</string>
     <string name="fragment_transaction">Transactions</string>
+    <string name="fragment_settings">Settings</string>
+    <string name="settings_category_cobrowse">Cobrowse.io SDK configuration</string>
+    <string name="settings_item_unredaction">Redaction by default</string>
+    <string name="settings_item_unredaction_summary_off">Everything is visible for the agent except for redacted views.</string>
+    <string name="settings_item_unredaction_summary_on">Everything is hidden from the agent except for unredacted views.</string>
+    <string name="menu_item_settings">Settings</string>
 </resources>
