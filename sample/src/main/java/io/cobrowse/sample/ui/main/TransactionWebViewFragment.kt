@@ -104,7 +104,7 @@ class TransactionWebViewFragment : Fragment(), CobrowseIO.Unredacted {
 
     override fun unredactedViews(): MutableList<View> {
         return if (CobrowseSessionDelegate.isRedactionByDefaultEnabled(requireContext()))
-            mutableListOf(binding.webView)
+            mutableListOf(binding.root)
             else mutableListOf()
     }
 }
