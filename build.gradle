@@ -5,9 +5,10 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.0.2'
+        classpath 'com.android.tools.build:gradle:8.1.2'
         classpath 'com.google.gms:google-services:4.3.15'
         classpath "androidx.navigation:navigation-safe-args-gradle-plugin:2.7.0"
+        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.10'
     }
 }
 
@@ -19,32 +20,42 @@ allprojects {
     }
 
     afterEvaluate { Project project ->
-        def propsFile = project.file('standalone.jks.properties')
+        File propsFile
+        if (project.name == 'standalone') {
+            propsFile = project.file('standalone.jks.properties')
+        } else if (project.name == 'sample') {
+            propsFile = project.file('cobrowse.keystore.properties')
+        } else {
+            return
+        }
 
-        println 'propsFile.exists() ' + propsFile.exists()
-        println 'project.hasProperty("android") ' + project.hasProperty("android")
-        println 'project.getProperties() ' + project.getProperties()
+        if (!project.hasProperty("android")) {
+            throw new GradleException("${project.name} project is not Android?")
+        }
 
-        if (propsFile.exists() && project.hasProperty("android")) {
-            def props = new Properties()
-            props.load(new FileInputStream(propsFile))
+        if (!propsFile.exists()) {
+            project.logger.warn("Signing configuration at ${propsFile.name} is not found")
+            return
+        }
 
-            android {
-                signingConfigs {
-                    release {
-                        keyAlias props['keyAlias']
-                        keyPassword props['keyPassword']
-                        storeFile project.file(props['storeFile'])
-                        storePassword props['storePassword']
-                    }
+        def props = new Properties()
+        props.load(new FileInputStream(propsFile))
+
+        android {
+            signingConfigs {
+                release {
+                    keyAlias props['keyAlias']
+                    keyPassword props['keyPassword']
+                    storeFile project.file(props['storeFile'])
+                    storePassword props['storePassword']
                 }
-                buildTypes {
-                    release {
-                        signingConfig signingConfigs.release
-                    }
-                    debug {
-                        signingConfig signingConfigs.release
-                    }
+            }
+            buildTypes {
+                release {
+                    signingConfig signingConfigs.release
+                }
+                debug {
+                    signingConfig signingConfigs.release
                 }
             }
         }

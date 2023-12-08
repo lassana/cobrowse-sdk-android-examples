@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<locale-config xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Refer to: https://developer.android.com/guide/topics/resources/app-languages#sample-config
+    -->
+    <locale android:name="en-GB"/> <!-- English (United Kingdom) -->
+    <locale android:name="en-US"/> <!-- English (United States) -->
+</locale-config>

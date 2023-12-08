@@ -1,0 +1,34 @@
+<resources>
+    <string name="app_name">Cobrowse.io</string>
+    <string name="prompt_email">Username</string>
+    <string name="prompt_password">Password</string>
+    <string name="action_sign_in">Sign in</string>
+    <string name="action_sign_in_short">Sign in</string>
+    <string name="welcome">"Welcome !"</string>
+    <string name="invalid_username">Username cannot be empty</string>
+    <string name="invalid_password">Password cannot be empty</string>
+    <string name="login_failed">"Login failed"</string>
+    <string name="login_welcome">Please enter your details</string>
+    <string name="log_out">Log out</string>
+    <string name="logout_failed">Logout operation failed</string>
+    <string name="goodbye">You have been logged out</string>
+    <string name="menu_item_account">Account</string>
+    <string name="login_welcome_secondary"><b>Note</b>\n<small>Any login details will work\ne.g. \"user\" / \"password\"</small></string>
+    <string name="fragment_account_title">Account</string>
+    <string name="end_cobrowse_session">Finish screensharing</string>
+    <string name="agent_present_welcome">Please enter your present code</string>
+    <string name="fragment_agent_present_title">Agent Present</string>
+    <string name="agent_present_welcome_you_are_presenting">You are now presenting</string>
+    <string name="transaction_amount">$%1$.2f</string>
+    <string name="total_spent_amount_footer">this month</string>
+    <string name="total_spent_amount_header">Spent</string>
+    <string name="transaction_detail_subtitle">%1$s at %2$s</string>
+    <string name="transaction_detail_subtitle_alt">%1$s %2$s, %3$s at %4$s</string>
+    <string name="button_agent_present">Agent present mode</string>
+    <string name="button_get_session_code">Get session code</string>
+    <string name="textview_balance_header">Balance</string>
+    <string name="fragment_transaction_webview">Transaction</string>
+    <string name="default_notification_channel_id" translatable="false">fcm_default_channel</string>
+    <string name="default_notification_channel_name">Default Notifications</string>
+    <string name="fragment_transaction">Transactions</string>
+</resources>
