@@ -96,6 +96,7 @@ class AccountFragment : Fragment(), CobrowseIO.Redacted  {
         menuHost.addMenuProvider(object : MenuProvider {
             override fun onCreateMenu(menu: Menu, menuInflater: MenuInflater) {
                 menuInflater.inflate(R.menu.menu_account, menu)
+                updateUiWithSession(viewModel.cobrowseDelegate.current.value)
             }
 
             override fun onMenuItemSelected(menuItem: MenuItem): Boolean {
