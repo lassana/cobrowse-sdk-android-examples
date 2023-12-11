@@ -18,7 +18,6 @@ import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import io.cobrowse.CobrowseIO
 import io.cobrowse.sample.R
-import io.cobrowse.sample.data.CobrowseSessionDelegate
 import io.cobrowse.sample.databinding.ActivityLoginBinding
 import io.cobrowse.sample.ui.CobrowseViewModelFactory
 import io.cobrowse.sample.ui.afterTextChanged
