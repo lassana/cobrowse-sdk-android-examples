@@ -217,8 +217,9 @@ class TransactionsChartFragment : Fragment(), CobrowseIO.Redacted, CobrowseIO.Un
         return if (CobrowseSessionDelegate.isRedactionByDefaultEnabled(requireContext()))
             mutableListOf(
                 binding.textviewBalanceHeader,
-                binding.textviewTotalSpentFooter,
                 binding.textviewTotalSpentHeader,
+                binding.textviewTotalSpent,
+                binding.textviewTotalSpentFooter,
                 binding.chart
             )
             else mutableListOf()
