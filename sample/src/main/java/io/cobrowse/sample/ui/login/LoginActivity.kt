@@ -27,7 +27,7 @@ import io.cobrowse.sample.ui.main.MainActivity
 /**
  * Activity with the login form.
  */
-class LoginActivity : AppCompatActivity(), CobrowseIO.Redacted, CobrowseIO.Unredacted {
+class LoginActivity : AppCompatActivity(), CobrowseIO.Redacted {
 
     private lateinit var loginViewModel: LoginViewModel
     private lateinit var binding: ActivityLoginBinding
@@ -164,16 +164,5 @@ class LoginActivity : AppCompatActivity(), CobrowseIO.Redacted, CobrowseIO.Unred
         return mutableListOf(
             binding.username,
             binding.password)
-    }
-
-    override fun unredactedViews(): MutableList<View> {
-        return if (CobrowseSessionDelegate.isRedactionByDefaultEnabled(this))
-            mutableListOf(
-                binding.logo,
-                binding.welcome,
-                binding.login,
-                binding.loading
-            )
-            else mutableListOf()
     }
 }
