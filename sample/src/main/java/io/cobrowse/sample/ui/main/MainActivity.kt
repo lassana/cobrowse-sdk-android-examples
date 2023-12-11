@@ -253,9 +253,6 @@ class MainActivity : AppCompatActivity(), CobrowseIO.Redacted, CobrowseIO.Unreda
                 bottomSheetBehavior.state = savedInstanceState.getInt("bottomSheetBehaviorState",
                                                                       BottomSheetBehavior.STATE_HALF_EXPANDED)
             }
-        } else if (bottomSheetDestinationId != bottomSheetStartDestinationId) {
-            // Expand the bottom sheet if its navigation is active
-            bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
         } else if (bottomSheetBehavior.isHideable) {
             // If no navigation is active, just make sure the bottom sheet is shown
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_HALF_EXPANDED
