@@ -330,12 +330,8 @@ class MainActivity : AppCompatActivity(), CobrowseIO.Redacted, CobrowseIO.Unreda
     override fun unredactedViews(): MutableList<View> {
         return if (CobrowseSessionDelegate.isRedactionByDefaultEnabled(this)) {
             val unredacted = navHostFragmentMain.childFragmentManager.collectCobrowseUnredactedViews()
-            // Unredact the main toolbar
-            unredacted.add(binding.toolbar)
             // Also unredact views from the bottom sheet navigation (if any)
             unredacted.addAll(navHostFragmentBottomSheet.childFragmentManager.collectCobrowseUnredactedViews())
-            // Also unredact the bottom sheet toolbar
-            unredacted.add(binding.toolbarHost)
             unredacted
         } else {
             mutableListOf()
