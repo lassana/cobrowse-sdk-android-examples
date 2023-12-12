@@ -15,3 +15,15 @@ fun FragmentManager.collectCobrowseRedactedViews(): MutableList<View> {
         .filterNotNull()
         .toMutableList()
 }
+
+/**
+ * Finds all fragments that implement [CobrowseIO.Unredacted] and collects all unredacted views
+ * from them.
+ */
+fun FragmentManager.collectCobrowseUnredactedViews(): MutableList<View> {
+    return this.fragments
+        .filter { it is CobrowseIO.Unredacted }
+        .flatMap { (it as CobrowseIO.Unredacted).unredactedViews() }
+        .filterNotNull()
+        .toMutableList()
+}

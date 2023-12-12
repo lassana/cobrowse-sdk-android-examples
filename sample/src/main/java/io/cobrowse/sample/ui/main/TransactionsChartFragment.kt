@@ -31,6 +31,7 @@ import com.github.mikephil.charting.data.PieDataSet
 import com.github.mikephil.charting.data.PieEntry
 import io.cobrowse.CobrowseIO
 import io.cobrowse.sample.R
+import io.cobrowse.sample.data.CobrowseSessionDelegate
 import io.cobrowse.sample.data.getAndroidLogTag
 import io.cobrowse.sample.data.model.Transaction
 import io.cobrowse.sample.databinding.FragmentTransactionsChartBinding
@@ -40,7 +41,7 @@ import io.cobrowse.sample.ui.onSizeChange
 /**
  * Fragment that displays the recent transactions statistics.
  */
-class TransactionsChartFragment : Fragment(), CobrowseIO.Redacted {
+class TransactionsChartFragment : Fragment(), CobrowseIO.Redacted, CobrowseIO.Unredacted {
 
     @Suppress("PrivatePropertyName")
     private val Any.TAG: String
@@ -210,5 +211,17 @@ class TransactionsChartFragment : Fragment(), CobrowseIO.Redacted {
             binding.textviewBalance,
             binding.textviewTotalSpent
         )
+    }
+
+    override fun unredactedViews(): MutableList<View> {
+        return if (CobrowseSessionDelegate.isRedactionByDefaultEnabled(requireContext()))
+            mutableListOf(
+                binding.textviewBalanceHeader,
+                binding.textviewTotalSpentHeader,
+                binding.textviewTotalSpent,
+                binding.textviewTotalSpentFooter,
+                binding.chart
+            )
+            else mutableListOf()
     }
 }
