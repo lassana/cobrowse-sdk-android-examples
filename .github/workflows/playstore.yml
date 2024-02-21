@@ -58,5 +58,4 @@ jobs:
           serviceAccountJson: service_account.json
           packageName: io.cobrowse.demo
           releaseFiles: sample/build/outputs/bundle/release/sample-release.aab
-          track: production
-          changesNotSentForReview: true
+          track: alpha
