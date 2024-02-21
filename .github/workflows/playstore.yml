@@ -45,12 +45,16 @@ jobs:
       - name: Bump the app version code
         run: |
           COBROWSE_VERSION_CODE_OLD=$(grep "versionCode" sample/build.gradle | awk '{print $2}' | tr -d '\n')
+          echo "COBROWSE_VERSION_CODE_OLD is ${COBROWSE_VERSION_CODE_OLD}"
           COBROWSE_VERSION_CODE=$((${COBROWSE_VERSION_CODE_OLD} + ${{github.run_number}}))
+          echo "COBROWSE_VERSION_CODE is ${COBROWSE_VERSION_CODE}"
           sed -i "s/versionCode [0-9]\+/versionCode ${COBROWSE_VERSION_CODE}/g" sample/build.gradle
           sed -i "s/\(versionName[[:space:]]*\).*/\\1\"${COBROWSE_VERSION}\"/" sample/build.gradle
+          echo "Printing sample/build.gradle:"
+          cat sample/build.gradle
       - name: Build the AAB
         run: |
-          ./gradlew bundleRelease
+          ./gradlew sample:bundleRelease
       - name: Upload to the Play Store
         id: publish
         uses: r0adkll/upload-google-play@v1
