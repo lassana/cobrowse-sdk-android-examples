@@ -7,6 +7,8 @@ on:
       - 'sample/**'
       - 'build.gradle'
       - '.github/workflows/playstore.yml'
+  pull_request:
+    branches: [ master ]
 
 jobs:
   build:
@@ -18,10 +20,6 @@ jobs:
         with:
           distribution: 'temurin'
           java-version: '17'
-      - name: Get latest commit information
-        run: |
-          echo "GITHUB_SHA_SHORT=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
-          echo "GITHUB_COMMIT_MESSAGE=$(git show -s --format=%s)" >> $GITHUB_ENV
       - name: Find SDK version
         run: |
           echo "COBROWSE_VERSION=$(cat sample/build.gradle | grep -oP 'io\.cobrowse\:cobrowse-sdk-android\:\K([0-9]+\.[0-9]+\.[0-9]+)')" >> $GITHUB_ENV
@@ -33,6 +31,7 @@ jobs:
           COBROWSE_STANDALONE_KEYSTORE_BASE_64: ${{ secrets.COBROWSE_STANDALONE_KEYSTORE_BASE_64 }}
           COBROWSE_STANDALONE_KEYSTORE_PROPERTIES: ${{ secrets.COBROWSE_STANDALONE_KEYSTORE_PROPERTIES }}
           COBROWSE_STANDALONE_GOOGLE_SERVICES_JSON: ${{ secrets.COBROWSE_STANDALONE_GOOGLE_SERVICES_JSON }}
+          COBROWSE_GOOGLE_SERVICE_ACCOUNT_JSON: ${{ secrets.COBROWSE_GOOGLE_SERVICE_ACCOUNT_JSON }}
         # Yes, python is the simplest way to write a Github secret into a file keeping new line breaks
         # https://github.com/orgs/community/discussions/24928#discussioncomment-6059242
         run: |
@@ -42,14 +41,16 @@ jobs:
           python -c "import os; import base64;  file = open('standalone/standalone.jks',            'wb');  file.write(base64.b64decode(os.environ['COBROWSE_STANDALONE_KEYSTORE_BASE_64']    ));  file.close()"
           python -c "import os;                 file = open('standalone/standalone.jks.properties', 'w');   file.write(                 os.environ['COBROWSE_STANDALONE_KEYSTORE_PROPERTIES']  );  file.close()"
           python -c "import os;                 file = open('standalone/google-services.json',      'w');   file.write(                 os.environ['COBROWSE_STANDALONE_GOOGLE_SERVICES_JSON'] );  file.close()"
-          echo '${{ secrets.COBROWSE_SERVICE_ACCOUNT_JSON }}' > service_account.json
+          python -c "import os;                 file = open('service_account.json',                 'w');   file.write(                 os.environ['COBROWSE_GOOGLE_SERVICE_ACCOUNT_JSON']     );  file.close()"
       - name: Bump the app version code
         run: |
-          sed -i "s/versionCode [0-9]\+/versionCode ${{github.run_number}}/g" sample/build.gradle
-          sed -i "s/\(versionName[[:space:]]*\).*/\\1\"${COBROWSE_VERSION}\"/" app/build.gradle
+          COBROWSE_VERSION_CODE_OLD=$(grep "versionCode" sample/build.gradle | awk '{print $2}' | tr -d '\n')
+          COBROWSE_VERSION_CODE=$((${COBROWSE_VERSION_CODE_OLD} + ${{github.run_number}}))
+          sed -i "s/versionCode [0-9]\+/versionCode ${COBROWSE_VERSION_CODE}/g" sample/build.gradle
+          sed -i "s/\(versionName[[:space:]]*\).*/\\1\"${COBROWSE_VERSION}\"/" sample/build.gradle
       - name: Build the AAB
         run: |
-          ./gradlew sample:bundleRelease
+          ./gradlew bundleRelease
       - name: Upload to the Play Store
         id: publish
         uses: r0adkll/upload-google-play@v1
@@ -57,4 +58,5 @@ jobs:
           serviceAccountJson: service_account.json
           packageName: io.cobrowse.demo
           releaseFiles: sample/build/outputs/bundle/release/sample-release.aab
-          track: qa
+          track: production
+          changesNotSentForReview: true
