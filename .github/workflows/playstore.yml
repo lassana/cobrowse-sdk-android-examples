@@ -54,7 +54,7 @@ jobs:
           cat sample/build.gradle
       - name: Build the AAB
         run: |
-          ./gradlew sample:bundleRelease
+          ./gradlew sample:bundleRelease --debug
       - name: Upload to the Play Store
         id: publish
         uses: r0adkll/upload-google-play@v1
