@@ -148,7 +148,7 @@ class MainActivity : AppCompatActivity(),
                 return false
             }
         })
-        menuInflater.inflate(R.menu.menu_main_host, actions.menu as MenuBuilder)
+        menuInflater.inflate(R.menu.menu_main_host, actions.menu)
         actions.menu.findItem(R.id.end_cobrowse_session)?.let {
             it.icon?.constantState?.newDrawable()?.let { newDrawable ->
                 DrawableCompat.setTint(newDrawable, ContextCompat.getColor(this, R.color.primaryColor))
