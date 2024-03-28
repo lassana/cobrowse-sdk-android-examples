@@ -8,8 +8,10 @@ import androidx.appcompat.app.AlertDialog
 import androidx.lifecycle.ViewModelProvider
 import androidx.preference.Preference
 import androidx.preference.PreferenceFragmentCompat
+import io.cobrowse.CobrowseAccessibilityService
 import io.cobrowse.sample.R
 import io.cobrowse.sample.ui.CobrowseViewModelFactory
+import io.cobrowse.ui.CobrowseActivity
 
 /**
  * Fragment that allows user to modify persistent preferences.
@@ -31,6 +33,11 @@ class SettingsFragment : PreferenceFragmentCompat() {
         findPreference<Preference?>("accessibilityService")?.let { button ->
             button.onPreferenceClickListener = Preference.OnPreferenceClickListener {
                 activity?.let {
+                    if (CobrowseAccessibilityService.isRunning(it)) {
+                        openAccessibilitySettings()
+                        return@OnPreferenceClickListener true
+                    }
+
                     with(AlertDialog.Builder(it).create()) {
                         this.setCancelable(false)
                         this.setTitle(getString(R.string.accessibility_warning_title))
@@ -45,8 +52,7 @@ class SettingsFragment : PreferenceFragmentCompat() {
                             DialogInterface.BUTTON_POSITIVE,
                             getString(R.string.accessibility_warning_button_ok)) { dialog, _ ->
                             dialog.dismiss()
-                            val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
-                            startActivity(intent)
+                            openAccessibilitySettings()
                         }
                         this.show()
                     }
@@ -54,6 +60,10 @@ class SettingsFragment : PreferenceFragmentCompat() {
                 return@OnPreferenceClickListener true
             }
         }
+    }
 
+    private fun openAccessibilitySettings() {
+        val intent = Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS)
+        startActivity(intent)
     }
 }
