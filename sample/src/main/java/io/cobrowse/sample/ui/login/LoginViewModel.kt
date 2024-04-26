@@ -156,8 +156,7 @@ class LoginViewModel(private val loginRepository: LoginRepository) : BaseViewMod
                     .toMutableMap()
                     .let {
                         uri.pathSegments.drop(1).firstOrNull()?.let { demoId ->
-                            it["demo"] = decode(demoId)
-                            it["cobrowseio_demo_id"] = decode(demoId)
+                            it["demo_id"] = decode(demoId)
                         }
                         customData(it.toMap())
                     }
