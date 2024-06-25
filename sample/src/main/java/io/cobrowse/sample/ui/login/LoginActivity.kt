@@ -169,15 +169,11 @@ class LoginActivity : AppCompatActivity(), CobrowseIO.Redacted {
     }
 
     override fun redactedViews(): MutableList<View> {
-        // The activity can be launched (started) during an active Cobrowse session,
-        // e.g. if all the activities were closed but the app was not,
-        // so LoginActivity starts again in such case.
-        // If there is an active session, the SDK might ask an activity for redacted views before
-        // its 'onCreate()` method finishes.
+        // The view binding is not initialized if LoginActivity was launched after user has already
+        // logged in.
+        // Return no views to be redacted as there isn't a view to be screen-shared anyway.
         return if (this::binding.isInitialized)
-            mutableListOf(
-                binding.username,
-                binding.password)
+            mutableListOf(binding.username, binding.password)
             else mutableListOf()
     }
 }
