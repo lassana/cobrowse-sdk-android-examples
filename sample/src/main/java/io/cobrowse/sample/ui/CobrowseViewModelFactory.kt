@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import io.cobrowse.sample.data.LoginRepository
 import io.cobrowse.sample.data.TransactionsDataSource
 import io.cobrowse.sample.data.TransactionsRepository
+import io.cobrowse.sample.ui.databinding.DataBindingSampleViewModel
 import io.cobrowse.sample.ui.login.LoginViewModel
 import io.cobrowse.sample.ui.main.AccountViewModel
 import io.cobrowse.sample.ui.main.AgentPresentViewModel
@@ -55,6 +56,9 @@ class CobrowseViewModelFactory : ViewModelProvider.Factory {
             }
             modelClass.isAssignableFrom(SettingsViewModel::class.java) -> {
                 SettingsViewModel() as T
+            }
+            modelClass.isAssignableFrom(DataBindingSampleViewModel::class.java) -> {
+                DataBindingSampleViewModel() as T
             }
             else -> throw IllegalArgumentException("Unknown ViewModel class")
         }

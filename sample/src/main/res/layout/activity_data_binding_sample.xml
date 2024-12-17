@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:context=".ui.main.ExampleDataBindingActivity">
+    <data>
+        <variable name="vm" type="io.cobrowse.sample.ui.databinding.DataBindingSampleViewModel"/>
+    </data>
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:id="@+id/example_data_binding"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <EditText
+            android:id="@+id/activity_data_binding_sample_edittext_first_name"
+            android:text="@={vm.user.firstName, default=empty}"
+            android:maxLines="1"
+            android:inputType="text"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_width="144dp"
+            android:layout_height="wrap_content" />
+
+        <EditText
+            android:id="@+id/activity_data_binding_sample_edittext_last_name"
+            android:text="@={vm.user.lastName, default=empty}"
+            android:maxLines="1"
+            android:inputType="text"
+            app:layout_constraintTop_toBottomOf="@+id/activity_data_binding_sample_edittext_first_name"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_width="144dp"
+            android:layout_height="wrap_content" />
+
+        <TextView
+            android:id="@+id/activity_data_binding_sample_textview_first_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{vm.user.firstName, default=empty}"
+            app:layout_constraintStart_toEndOf="@+id/activity_data_binding_sample_edittext_first_name"
+            app:layout_constraintTop_toTopOf="@+id/activity_data_binding_sample_edittext_first_name" />
+
+        <TextView
+            android:id="@+id/activity_data_binding_sample_textview_last_name"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@{vm.user.lastName, default=empty}"
+            app:layout_constraintStart_toEndOf="@+id/activity_data_binding_sample_edittext_last_name"
+            app:layout_constraintTop_toTopOf="@+id/activity_data_binding_sample_edittext_last_name" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/activity_data_binding_sample_recyclerview"
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+            app:listData="@{vm.users}"
+            app:layout_constraintTop_toBottomOf="@id/activity_data_binding_sample_edittext_last_name"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</layout>

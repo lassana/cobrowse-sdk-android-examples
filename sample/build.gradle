@@ -1,6 +1,7 @@
 apply plugin: 'com.android.application'
 apply plugin: 'org.jetbrains.kotlin.android'
 apply plugin: 'androidx.navigation.safeargs'
+apply plugin: 'kotlin-kapt'
 if (project.file("google-services.json").exists()) {
     apply plugin: 'com.google.gms.google-services'
 }
@@ -38,8 +39,7 @@ android {
     }
     buildFeatures {
         viewBinding true
-        // No data binding as it is in maintenance mode
-        // https://issuetracker.google.com/issues/173030256#comment10
+        dataBinding true
     }
 }
 
@@ -51,6 +51,7 @@ dependencies {
     implementation 'com.google.android.material:material:1.9.0'
     implementation 'androidx.annotation:annotation:1.6.0'
     implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
+    implementation 'androidx.fragment:fragment-ktx:1.5.6'
     implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.6.1'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1'
     implementation 'androidx.core:core-ktx:1.12.0'
