@@ -8,6 +8,7 @@ import com.google.firebase.messaging.FirebaseMessaging
 import io.cobrowse.CobrowseIO
 import io.cobrowse.sample.data.CobrowseSessionDelegate
 import io.cobrowse.sample.data.getAndroidLogTag
+import okhttp3.OkHttpClient
 
 /**
  * Android application class.
@@ -22,6 +23,9 @@ class MainApplication : Application() {
         super.onCreate()
 
         with(CobrowseIO.instance()) {
+            okHttpClient(OkHttpClient.Builder()
+                .addInterceptor(LoggingInterceptor())
+                .build())
             license("trial")
             customData(buildMap<String, String> {
                 put(CobrowseIO.USER_EMAIL_KEY, "android@demo.com")
