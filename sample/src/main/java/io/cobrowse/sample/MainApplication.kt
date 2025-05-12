@@ -22,6 +22,7 @@ class MainApplication : Application() {
         super.onCreate()
 
         with(CobrowseIO.instance()) {
+            okHttpClient(LoggingWebSocketOkHttpClient())
             license("trial")
             customData(buildMap<String, String> {
                 put(CobrowseIO.USER_EMAIL_KEY, "android@demo.com")
