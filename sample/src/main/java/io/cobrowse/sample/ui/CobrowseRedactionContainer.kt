@@ -3,6 +3,7 @@ package io.cobrowse.sample.ui
 import android.view.View
 import androidx.fragment.app.Fragment
 import io.cobrowse.CobrowseIO
+import io.cobrowse.sample.data.CobrowseSessionDelegate
 
 /**
  * Helps track all fragments with active (alive) views in an activity, including fragments which are
@@ -43,8 +44,23 @@ class CobrowseRedactionContainer : ICobrowseRedactionContainer {
 
     override fun collectRedactedViewsInFragments(): MutableList<View> {
         return this.fragmentsWithViews
-                .filter { it is CobrowseIO.Redacted }
-                .flatMap { (it as CobrowseIO.Redacted).redactedViews() as MutableList<View?> }
+                .flatMap {
+                    if (CobrowseSessionDelegate.isRedactionByDefaultEnabled(it.requireContext())) {
+                        // At the exact moment when one fragment is replaced with another one,
+                        // the views from the first fragment are getting replaced in the activity's view hierarchy
+                        // by the views from the second fragment.
+                        // The Cobrowse SDK cannot find the old views anymore,
+                        // yet they are still briefly visible for a few milliseconds until
+                        // the fragment transaction animation finishes.
+                        // To prevent the sensitive data from being visible during this time,
+                        // we treat all views from the fragments with redaction enabled as redacted.
+                        listOf<View?>(it.view)
+                    } else if (it is CobrowseIO.Redacted) {
+                        it.redactedViews() as List<View?>
+                    } else {
+                        emptyList<View?>()
+                    }
+                }
                 .filterNotNull()
                 .toMutableList()
     }
