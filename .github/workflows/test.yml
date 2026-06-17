@@ -4,16 +4,12 @@ on:
   workflow_dispatch:
   pull_request:
 
-permissions:
-  contents: write
-  pull-requests: write
-
 concurrency:
   group: job-update-packages
   cancel-in-progress: false
 
 jobs:
-  build:
+  demotest:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/create-github-app-token@v3
@@ -23,3 +19,5 @@ jobs:
           private-key: ${{ secrets.COBROWSE_BOT_KEY }}
       - name: Checkout repository
         uses: actions/checkout@v3
+        with:
+          token: ${{ steps.app-token.outputs.token }}
