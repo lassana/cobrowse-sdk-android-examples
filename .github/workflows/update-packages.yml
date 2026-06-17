@@ -17,7 +17,7 @@ jobs:
       - uses: actions/create-github-app-token@v3
         id: app-token
         with:
-          client-id: ${{ vars.COBROWSE_BOT_ID }}
+          client-id: ${{ vars.COBROWSE_BOT_CLIENT_ID }}
           private-key: ${{ secrets.COBROWSE_BOT_KEY }}
       - name: Checkout repository
         uses: actions/checkout@v3
