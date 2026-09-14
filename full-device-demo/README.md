@@ -10,10 +10,6 @@ feature of the Cobrowse SDK. It displays live states for:
 
 ## Running
 
-```sh
-./gradlew :full-device-demo:installDebug
-```
-
 The app starts Cobrowse with the `trial` license. Tap **Create session**, enter the
 displayed code at <https://cobrowse.io/dashboard>, then upgrade the session to full
 device from the agent side. Use **Open accessibility settings** to enable the

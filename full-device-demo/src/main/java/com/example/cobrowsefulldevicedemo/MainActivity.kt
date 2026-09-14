@@ -3,10 +3,14 @@ package com.example.cobrowsefulldevicedemo
 import android.content.Intent
 import android.os.Bundle
 import android.provider.Settings
+import android.view.View
 import android.widget.Button
 import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.appcompat.widget.Toolbar
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import io.cobrowse.CobrowseAccessibilityService
 import io.cobrowse.CobrowseIO
 import io.cobrowse.Session
@@ -23,6 +27,17 @@ class MainActivity : AppCompatActivity(), CobrowseIO.SessionLoadDelegate {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        val toolbar = findViewById<Toolbar>(R.id.toolbar)
+        setSupportActionBar(toolbar)
+
+        ViewCompat.setOnApplyWindowInsetsListener(findViewById<View>(R.id.root)) { root, windowInsets ->
+            val insets = windowInsets.getInsets(
+                WindowInsetsCompat.Type.systemBars() or WindowInsetsCompat.Type.displayCutout())
+            toolbar.setPadding(0, insets.top, 0, 0)
+            root.setPadding(insets.left, 0, insets.right, insets.bottom)
+            WindowInsetsCompat.CONSUMED
+        }
 
         sessionState = findViewById(R.id.session_state)
         remoteControlState = findViewById(R.id.remote_control_state)

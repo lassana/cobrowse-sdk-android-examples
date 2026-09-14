@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.FullDeviceDemo" parent="Theme.AppCompat.DayNight.DarkActionBar" />
+    <style name="Theme.FullDeviceDemo" parent="Theme.AppCompat.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/colorPrimary</item>
+    </style>
 
     <style name="StateCaption" parent="TextAppearance.AppCompat.Caption">
         <item name="android:layout_marginTop">16dp</item>

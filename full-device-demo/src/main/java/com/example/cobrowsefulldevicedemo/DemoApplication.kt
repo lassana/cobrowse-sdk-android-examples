@@ -8,8 +8,7 @@ class DemoApplication : Application() {
     override fun onCreate() {
         super.onCreate()
         with(CobrowseIO.instance()) {
-            api("https://staging.cbrws.io/")
-            license("e-73R7b1nIeoFQ")
+            license("trial")
             customData(mapOf(CobrowseIO.DEVICE_NAME_KEY to "Full Device Demo"))
             start()
         }
