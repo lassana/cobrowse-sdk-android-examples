@@ -1,0 +1,75 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <TextView
+        style="@style/StateCaption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/label_session" />
+
+    <TextView
+        android:id="@+id/session_state"
+        style="@style/StateValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/session_none" />
+
+    <TextView
+        style="@style/StateCaption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/label_remote_control" />
+
+    <TextView
+        android:id="@+id/remote_control_state"
+        style="@style/StateValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/remote_control_no_session" />
+
+    <TextView
+        style="@style/StateCaption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/label_accessibility" />
+
+    <TextView
+        android:id="@+id/accessibility_state"
+        style="@style/StateValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/accessibility_disabled_in_app" />
+
+    <TextView
+        style="@style/StateCaption"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/label_session_code" />
+
+    <TextView
+        android:id="@+id/session_code"
+        style="@style/StateValue"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textIsSelectable="true"
+        android:text="@string/session_code_none" />
+
+    <Button
+        android:id="@+id/session_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="@string/button_create_session" />
+
+    <Button
+        android:id="@+id/accessibility_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="8dp"
+        android:text="@string/button_accessibility_settings" />
+
+</LinearLayout>

@@ -12,6 +12,7 @@ You can build the example apps with Android Studio:
 
 - [`sample`](/sample) - Kotlin example app
 - [`standalone`](/standalone) - Java standalone example
+- [`full-device-demo`](/full-device-demo) - Kotlin full-device remote control demo
 
 ## Add your license key
 

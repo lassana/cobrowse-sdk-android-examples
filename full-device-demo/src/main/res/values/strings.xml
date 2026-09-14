@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">Full Device Demo</string>
+
+    <string name="label_session">Session</string>
+    <string name="label_remote_control">Remote control</string>
+    <string name="label_accessibility">Cobrowse accessibility service</string>
+    <string name="label_session_code">Session code</string>
+
+    <string name="session_none">No session</string>
+    <string name="session_pending">Pending — waiting for an agent</string>
+    <string name="session_authorizing">Authorizing — waiting for user consent</string>
+    <string name="session_active_in_app">Active — in-app</string>
+    <string name="session_active_full_device">Active — full device</string>
+    <string name="session_active_full_device_requested">Active — in-app (full device requested)</string>
+    <string name="session_active_full_device_rejected">Active — in-app (full device rejected)</string>
+    <string name="session_ended">Ended</string>
+    <string name="state_unknown">Unknown</string>
+
+    <string name="remote_control_no_session">No active session</string>
+    <string name="remote_control_off">Off</string>
+    <string name="remote_control_requested">Requested — waiting for approval</string>
+    <string name="remote_control_rejected">Rejected</string>
+    <string name="remote_control_active_in_app">Active — in-app</string>
+    <string name="remote_control_active_full_device">Active — full device</string>
+    <string name="remote_control_full_device_unavailable">Full device granted, but the accessibility service is off</string>
+
+    <string name="accessibility_disabled_in_app">Disabled in the app manifest</string>
+    <string name="accessibility_disabled_in_system">Enabled in the app, disabled in system settings</string>
+    <string name="accessibility_enabled">Enabled and running</string>
+
+    <string name="session_code_none">—</string>
+
+    <string name="button_create_session">Create session</string>
+    <string name="button_end_session">End session</string>
+    <string name="button_accessibility_settings">Open accessibility settings</string>
+</resources>
