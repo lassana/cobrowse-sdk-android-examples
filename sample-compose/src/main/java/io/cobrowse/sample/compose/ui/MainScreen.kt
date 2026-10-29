@@ -7,12 +7,19 @@ import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.IndicationNodeFactory
+import androidx.compose.foundation.LocalIndication
+import androidx.compose.foundation.gestures.awaitEachGesture
+import androidx.compose.foundation.gestures.awaitFirstDown
+import androidx.compose.foundation.gestures.waitForUpOrCancellation
+import androidx.compose.foundation.interaction.InteractionSource
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
@@ -27,6 +34,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
 import androidx.compose.foundation.layout.windowInsetsPadding
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.BottomSheetDefaults
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -37,6 +45,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -45,6 +54,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.node.DelegatableNode
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -106,96 +117,144 @@ fun MainScreen(
                 WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal)
             )
     ) {
-        BottomSheetScaffold(
-            scaffoldState = scaffoldState,
-            sheetPeekHeight = maxHeight * 0.4f,
-            containerColor = MaterialTheme.colorScheme.background,
-            sheetContainerColor = MaterialTheme.colorScheme.surface,
-            sheetContent = {
-                AnimatedContent(
-                    targetState = sheetPages,
-                    transitionSpec = {
-                        val forward = targetState.size >= initialState.size
-                        (slideInHorizontally(tween(300)) { if (forward) it else -it } +
-                            fadeIn(tween(220))) togetherWith
-                            (slideOutHorizontally(tween(300)) { if (forward) -it else it } +
-                                fadeOut(tween(180)))
-                    },
-                    modifier = Modifier.fillMaxSize(),
-                    label = "sheet_content_animation"
-                ) { pages ->
-                    Column(modifier = Modifier.fillMaxSize()) {
-                        when (val page = pages.last()) {
-                            is SheetDestination.Transactions -> {
-                                SheetTopBar(
-                                    title = stringResource(R.string.fragment_transaction),
-                                    isSheetExpanded = isSheetExpanded
-                                )
-                                TransactionsScreen(
-                                    viewModelFactory = viewModelFactory,
-                                    onTransactionClick = { transaction ->
-                                        sheetPages = sheetPages +
-                                            SheetDestination.TransactionDetail(transaction.detailsUrl(context))
-                                    },
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .weight(1f)
-                                )
-                            }
-                            is SheetDestination.TransactionDetail -> {
-                                SheetTopBar(
-                                    title = stringResource(R.string.fragment_transaction_webview),
-                                    isSheetExpanded = isSheetExpanded,
-                                    onBack = { sheetPages = sheetPages.dropLast(1) }
-                                )
-                                TransactionWebView(
-                                    url = page.url,
-                                    onOpenUrl = { uri ->
-                                        sheetPages = sheetPages +
-                                            SheetDestination.TransactionDetail(uri.toString())
-                                    },
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .weight(1f)
-                                        .navigationBarsPadding()
-                                )
+        // The scaffold makes the drag handle clickable, with a ripple clipped to the handle.
+        // The handle highlights itself instead, everything else keeps the ripple.
+        val ripple = LocalIndication.current
+        CompositionLocalProvider(LocalIndication provides NoIndication) {
+            BottomSheetScaffold(
+                scaffoldState = scaffoldState,
+                sheetPeekHeight = maxHeight * 0.4f,
+                containerColor = MaterialTheme.colorScheme.background,
+                sheetContainerColor = MaterialTheme.colorScheme.surface,
+                sheetDragHandle = { SheetDragHandle() },
+                sheetContent = {
+                    CompositionLocalProvider(LocalIndication provides ripple) {
+                        AnimatedContent(
+                            targetState = sheetPages,
+                            transitionSpec = {
+                                val forward = targetState.size >= initialState.size
+                                (slideInHorizontally(tween(300)) { if (forward) it else -it } +
+                                    fadeIn(tween(220))) togetherWith
+                                    (slideOutHorizontally(tween(300)) { if (forward) -it else it } +
+                                        fadeOut(tween(180)))
+                            },
+                            modifier = Modifier.fillMaxSize(),
+                            label = "sheet_content_animation"
+                        ) { pages ->
+                            Column(modifier = Modifier.fillMaxSize()) {
+                                when (val page = pages.last()) {
+                                    is SheetDestination.Transactions -> {
+                                        SheetTopBar(
+                                            title = stringResource(R.string.fragment_transaction),
+                                            isSheetExpanded = isSheetExpanded
+                                        )
+                                        TransactionsScreen(
+                                            viewModelFactory = viewModelFactory,
+                                            onTransactionClick = { transaction ->
+                                                sheetPages = sheetPages +
+                                                    SheetDestination.TransactionDetail(transaction.detailsUrl(context))
+                                            },
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .weight(1f)
+                                        )
+                                    }
+                                    is SheetDestination.TransactionDetail -> {
+                                        SheetTopBar(
+                                            title = stringResource(R.string.fragment_transaction_webview),
+                                            isSheetExpanded = isSheetExpanded,
+                                            onBack = { sheetPages = sheetPages.dropLast(1) }
+                                        )
+                                        TransactionWebView(
+                                            url = page.url,
+                                            onOpenUrl = { uri ->
+                                                sheetPages = sheetPages +
+                                                    SheetDestination.TransactionDetail(uri.toString())
+                                            },
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .weight(1f)
+                                                .navigationBarsPadding()
+                                        )
+                                    }
+                                }
                             }
                         }
                     }
                 }
-            }
-        ) { innerPadding ->
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(bottom = innerPadding.calculateBottomPadding())
-            ) {
-                TransactionsChartScreen(
-                    viewModelFactory = viewModelFactory,
-                    modifier = Modifier.fillMaxSize()
-                )
+            ) { innerPadding ->
+                CompositionLocalProvider(LocalIndication provides ripple) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .padding(bottom = innerPadding.calculateBottomPadding())
+                    ) {
+                        TransactionsChartScreen(
+                            viewModelFactory = viewModelFactory,
+                            modifier = Modifier.fillMaxSize()
+                        )
 
-                Surface(
-                    modifier = Modifier
-                        .align(Alignment.TopEnd)
-                        .padding(8.dp),
-                    color = MaterialTheme.colorScheme.primary,
-                    shape = CircleShape,
-                    shadowElevation = 4.dp
-                ) {
-                    Row {
-                        EndSessionAction()
-                        IconButton(onClick = onAccount) {
-                            Icon(
-                                painter = painterResource(R.drawable.ic_action_account),
-                                contentDescription = stringResource(R.string.menu_item_account)
-                            )
+                        Surface(
+                            modifier = Modifier
+                                .align(Alignment.TopEnd)
+                                .padding(8.dp),
+                            color = MaterialTheme.colorScheme.primary,
+                            shape = CircleShape,
+                            shadowElevation = 4.dp
+                        ) {
+                            Row {
+                                EndSessionAction()
+                                IconButton(onClick = onAccount) {
+                                    Icon(
+                                        painter = painterResource(R.drawable.ic_action_account),
+                                        contentDescription = stringResource(R.string.menu_item_account)
+                                    )
+                                }
+                            }
                         }
                     }
                 }
             }
         }
     }
+}
+
+/**
+ * The drag handle of the bottom sheet, which darkens while pressed.
+ */
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun SheetDragHandle() {
+    var isPressed by remember { mutableStateOf(false) }
+    val color by animateColorAsState(
+        targetValue = if (isPressed) MaterialTheme.colorScheme.onSurface
+            else MaterialTheme.colorScheme.onSurfaceVariant,
+        label = "drag_handle_color"
+    )
+    BottomSheetDefaults.DragHandle(
+        color = color,
+        modifier = Modifier.pointerInput(Unit) {
+            // Only observes the touches, the bottom sheet handles them
+            awaitEachGesture {
+                awaitFirstDown(requireUnconsumed = false)
+                isPressed = true
+                waitForUpOrCancellation()
+                isPressed = false
+            }
+        }
+    )
+}
+
+/**
+ * An indication that draws nothing.
+ */
+private object NoIndication : IndicationNodeFactory {
+    override fun create(interactionSource: InteractionSource): DelegatableNode =
+        object : Modifier.Node() {}
+
+    override fun equals(other: Any?): Boolean = other === this
+
+    override fun hashCode(): Int = System.identityHashCode(this)
 }
 
 /**
