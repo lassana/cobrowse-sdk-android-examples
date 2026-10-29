@@ -11,6 +11,7 @@ buildscript {
         // AGP 9 compiles Kotlin itself (built-in Kotlin), this only pins the Kotlin compiler version
         classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:2.4.21'
         classpath 'org.jetbrains.kotlin:compose-compiler-gradle-plugin:2.4.21'
+        classpath 'io.cobrowse:cobrowse-sdk-android-gradle-plugin:3.19.1'
     }
 }
 

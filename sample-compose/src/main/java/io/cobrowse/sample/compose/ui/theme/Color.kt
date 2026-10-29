@@ -25,3 +25,6 @@ val TertiaryTextColor = Color(0xFFAAAAAA)
 val PrimaryBackground = Color(0xFFF8F7FE)
 val SecondaryBackground = Color(0xFFFFFFFF)
 
+val PrimaryBackgroundDark = Color(0xFF171811)
+val SecondaryBackgroundDark = Color(0xFF131318)
+

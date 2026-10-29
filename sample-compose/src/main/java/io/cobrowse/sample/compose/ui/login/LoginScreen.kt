@@ -1,29 +1,29 @@
 package io.cobrowse.sample.compose.ui.login
 
-import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.widthIn
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,13 +31,19 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import io.cobrowse.cobrowseRedacted
 import io.cobrowse.sample.compose.R
 import io.cobrowse.sample.compose.ui.CobrowseViewModelFactory
+import io.cobrowse.sample.compose.ui.EndSessionAction
+import io.cobrowse.sample.compose.ui.SampleTopAppBar
+import io.cobrowse.sample.compose.ui.openPrivacyPolicy
 
 /**
  * A screen with the login form.
@@ -48,7 +54,7 @@ fun LoginScreen(
     onLoginSuccess: () -> Unit
 ) {
     val viewModel: LoginViewModel = viewModel(factory = viewModelFactory)
-    val uiState by viewModel.uiState.collectAsState()
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
     LaunchedEffect(uiState.isLoggedIn) {
@@ -57,20 +63,27 @@ fun LoginScreen(
         }
     }
 
-    Box(
-        modifier = Modifier
-            .fillMaxSize()
-            .padding(16.dp),
-        contentAlignment = Alignment.Center
-    ) {
+    Scaffold(
+        topBar = {
+            SampleTopAppBar(
+                title = stringResource(R.string.app_name),
+                actions = { EndSessionAction() }
+            )
+        }
+    ) { paddingValues ->
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Center,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+                .imePadding()
+                .verticalScroll(rememberScrollState())
+                .padding(16.dp)
         ) {
             Icon(
                 painter = painterResource(R.drawable.ic_launcher_foreground),
-                contentDescription = "Cobrowse.io Logo",
+                contentDescription = stringResource(R.string.app_name),
                 modifier = Modifier.size(96.dp),
                 tint = MaterialTheme.colorScheme.primary
             )
@@ -92,14 +105,16 @@ fun LoginScreen(
                 singleLine = true,
                 isError = uiState.usernameError != null,
                 supportingText = {
-                    if (uiState.usernameError != null) {
-                        Text(stringResource(uiState.usernameError!!))
-                    }
+                    uiState.usernameError?.let { Text(stringResource(it)) }
                 },
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Email,
+                    imeAction = ImeAction.Next
+                ),
                 modifier = Modifier
                     .widthIn(max = 320.dp)
                     .fillMaxWidth()
+                    .cobrowseRedacted()
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -112,17 +127,19 @@ fun LoginScreen(
                 visualTransformation = PasswordVisualTransformation(),
                 isError = uiState.passwordError != null,
                 supportingText = {
-                    if (uiState.passwordError != null) {
-                        Text(stringResource(uiState.passwordError!!))
-                    }
+                    uiState.passwordError?.let { Text(stringResource(it)) }
                 },
-                keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Password,
+                    imeAction = ImeAction.Done
+                ),
                 keyboardActions = KeyboardActions(
                     onDone = { viewModel.login() }
                 ),
                 modifier = Modifier
                     .widthIn(max = 320.dp)
                     .fillMaxWidth()
+                    .cobrowseRedacted()
             )
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -144,10 +161,10 @@ fun LoginScreen(
                 }
             }
 
-            if (uiState.errorMessage != null) {
+            uiState.errorMessage?.let {
                 Spacer(modifier = Modifier.height(16.dp))
                 Text(
-                    text = stringResource(uiState.errorMessage!!),
+                    text = stringResource(it),
                     color = MaterialTheme.colorScheme.error,
                     style = MaterialTheme.typography.bodySmall
                 )
@@ -164,13 +181,7 @@ fun LoginScreen(
 
             Spacer(modifier = Modifier.height(16.dp))
 
-            val privacy = stringResource(io.cobrowse.sample.core.R.string.privacy_policy_url)
-            TextButton(
-                onClick = {
-                    val intent = Intent(Intent.ACTION_VIEW, Uri.parse(privacy))
-                    context.startActivity(intent)
-                }
-            ) {
+            TextButton(onClick = { context.openPrivacyPolicy() }) {
                 Text(stringResource(io.cobrowse.sample.core.R.string.privacy_policy))
             }
         }

@@ -1,39 +1,29 @@
 package io.cobrowse.sample.compose.ui
 
 import androidx.compose.runtime.Composable
-import androidx.lifecycle.ViewModelStoreOwner
+import androidx.compose.runtime.remember
 import androidx.navigation.NavHostController
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
 import io.cobrowse.sample.compose.ui.account.AccountScreen
+import io.cobrowse.sample.compose.ui.account.AgentPresentScreen
 import io.cobrowse.sample.compose.ui.login.LoginScreen
-import io.cobrowse.sample.compose.ui.transactions.TransactionDetailScreen
+import io.cobrowse.sample.compose.ui.settings.SettingsScreen
 import io.cobrowse.sample.data.LoginRepository
 
 sealed class Screen(val route: String) {
     object Login : Screen("login")
     object Main : Screen("main")
     object Account : Screen("account")
-    object TransactionDetail : Screen("transaction_detail/{url}") {
-        fun createRoute(url: String) = "transaction_detail/$url"
-    }
+    object AgentPresent : Screen("agent_present")
+    object Settings : Screen("settings")
 }
 
 @Composable
-fun AppNavigation(
-    owner: ViewModelStoreOwner,
-    navController: NavHostController = rememberNavController(),
-) {
-    val viewModelFactory = CobrowseViewModelFactory()
-    val login = LoginRepository.getInstance()
-
-    val startDestination = if (login.isLoggedIn) {
-        Screen.Main.route
-    } else {
-        Screen.Login.route
+fun AppNavigation(navController: NavHostController) {
+    val viewModelFactory = remember { CobrowseViewModelFactory() }
+    val startDestination = remember {
+        if (LoginRepository.getInstance().isLoggedIn) Screen.Main.route else Screen.Login.route
     }
 
     NavHost(
@@ -53,14 +43,16 @@ fun AppNavigation(
 
         composable(Screen.Main.route) {
             MainScreen(
-                navController = navController,
-                viewModelFactory = viewModelFactory
+                viewModelFactory = viewModelFactory,
+                onAccount = { navController.navigate(Screen.Account.route) }
             )
         }
 
         composable(Screen.Account.route) {
             AccountScreen(
                 viewModelFactory = viewModelFactory,
+                onAgentPresent = { navController.navigate(Screen.AgentPresent.route) },
+                onSettings = { navController.navigate(Screen.Settings.route) },
                 onLogout = {
                     navController.navigate(Screen.Login.route) {
                         popUpTo(0) { inclusive = true }
@@ -71,15 +63,15 @@ fun AppNavigation(
             )
         }
 
-        composable(
-            route = Screen.TransactionDetail.route,
-            arguments = listOf(navArgument("url") { type = NavType.StringType })
-        ) { backStackEntry ->
-            val url = backStackEntry.arguments?.getString("url") ?: ""
-            TransactionDetailScreen(
-                url = url,
+        composable(Screen.AgentPresent.route) {
+            AgentPresentScreen(
+                viewModelFactory = viewModelFactory,
                 onBack = { navController.popBackStack() }
             )
+        }
+
+        composable(Screen.Settings.route) {
+            SettingsScreen(onBack = { navController.popBackStack() })
         }
     }
 }

@@ -1,143 +1,166 @@
 package io.cobrowse.sample.compose.ui.account
 
-import android.content.Intent
-import android.net.Uri
-import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowBack
-import androidx.compose.material3.*
-import androidx.compose.runtime.*
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
+import io.cobrowse.cobrowseRedacted
 import io.cobrowse.sample.compose.ui.CobrowseViewModelFactory
+import io.cobrowse.sample.compose.ui.EndSessionAction
+import io.cobrowse.sample.compose.ui.SampleTopAppBar
+import io.cobrowse.sample.compose.ui.openPrivacyPolicy
+import io.cobrowse.sample.compose.ui.rememberCobrowseSession
+import io.cobrowse.sample.compose.ui.theme.AccentLightColor
+import io.cobrowse.sample.core.R
 
-@OptIn(ExperimentalMaterial3Api::class)
+/**
+ * Displays the user who is currently logged in, and lets them share a session code or start
+ * the Agent Present mode.
+ */
 @Composable
 fun AccountScreen(
     viewModelFactory: CobrowseViewModelFactory,
+    onAgentPresent: () -> Unit,
+    onSettings: () -> Unit,
     onLogout: () -> Unit,
-    onBack: () -> Unit = {}
+    onBack: () -> Unit
 ) {
     val viewModel: AccountViewModel = viewModel(factory = viewModelFactory)
+    val sessionCode by viewModel.sessionCode.collectAsStateWithLifecycle()
+    val session by rememberCobrowseSession()
+    val isSessionActive = session?.isActive == true
     val context = LocalContext.current
-    var sessionCode by remember { mutableStateOf("") }
+
+    // The session code is no longer needed once the session has started or ended
+    LaunchedEffect(isSessionActive, session == null) {
+        if (isSessionActive || session == null) viewModel.clearSessionCode()
+    }
 
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text(stringResource(io.cobrowse.sample.core.R.string.fragment_account_title)) },
-                navigationIcon = {
-                    IconButton(onClick = onBack) {
-                        Icon(Icons.Default.ArrowBack,
-                            contentDescription = stringResource(
-                                io.cobrowse.sample.compose.R.string.icon_back))
+            SampleTopAppBar(
+                title = stringResource(R.string.fragment_account_title),
+                onBack = onBack,
+                actions = {
+                    EndSessionAction()
+                    IconButton(onClick = onSettings) {
+                        Icon(
+                            painter = painterResource(R.drawable.ic_action_settings),
+                            contentDescription = stringResource(R.string.menu_item_settings)
+                        )
                     }
-                },
-                colors = TopAppBarDefaults.topAppBarColors(
-                    containerColor = MaterialTheme.colorScheme.primary,
-                    titleContentColor = MaterialTheme.colorScheme.onPrimary,
-                    navigationIconContentColor = MaterialTheme.colorScheme.onPrimary
-                )
+                }
             )
         }
     ) { paddingValues ->
-        Box(
+        Column(
+            horizontalAlignment = Alignment.CenterHorizontally,
+            verticalArrangement = Arrangement.Center,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .padding(16.dp),
-            contentAlignment = Alignment.Center
+                .verticalScroll(rememberScrollState())
+                .padding(16.dp)
         ) {
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.Center,
-                modifier = Modifier.fillMaxWidth()
+            Image(
+                painter = painterResource(R.drawable.logo_account),
+                contentDescription = null
+            )
+
+            Text(
+                text = viewModel.user?.displayName.orEmpty(),
+                style = MaterialTheme.typography.titleLarge,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.cobrowseRedacted()
+            )
+
+            Text(
+                text = viewModel.user?.email.orEmpty(),
+                style = MaterialTheme.typography.bodyMedium,
+                textAlign = TextAlign.Center,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.cobrowseRedacted()
+            )
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            Text(
+                text = sessionCode,
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.alpha(if (sessionCode.isEmpty()) 0f else 1f)
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            // Keep the buttons' space while hidden, so the screen doesn't jump
+            val sessionButtonsAlpha = if (isSessionActive) 0f else 1f
+            Button(
+                onClick = { viewModel.requestSessionCode() },
+                enabled = !isSessionActive,
+                modifier = Modifier
+                    .width(220.dp)
+                    .alpha(sessionButtonsAlpha)
             ) {
-                Icon(
-                    painter = androidx.compose.ui.res.painterResource(android.R.drawable.ic_menu_myplaces),
-                    contentDescription = "Account",
-                    modifier = Modifier.size(96.dp),
-                    tint = MaterialTheme.colorScheme.primary
-                )
+                Text(stringResource(R.string.button_get_session_code))
+            }
 
-                Spacer(modifier = Modifier.height(16.dp))
+            Button(
+                onClick = onAgentPresent,
+                enabled = !isSessionActive,
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = AccentLightColor,
+                    contentColor = MaterialTheme.colorScheme.primary
+                ),
+                modifier = Modifier
+                    .width(220.dp)
+                    .alpha(sessionButtonsAlpha)
+            ) {
+                Text(stringResource(R.string.button_agent_present))
+            }
 
-                Text(
-                    text = viewModel.user?.displayName ?: "User",
-                    style = MaterialTheme.typography.titleLarge,
-                    textAlign = TextAlign.Center
-                )
+            TextButton(
+                onClick = {
+                    viewModel.logout()
+                    onLogout()
+                },
+                modifier = Modifier.width(220.dp)
+            ) {
+                Text(stringResource(R.string.log_out))
+            }
 
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Text(
-                    text = viewModel.user?.email ?: "user@example.com",
-                    style = MaterialTheme.typography.bodyMedium,
-                    textAlign = TextAlign.Center,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant
-                )
-
-                Spacer(modifier = Modifier.height(32.dp))
-
-                if (sessionCode.isNotEmpty()) {
-                    Text(
-                        text = sessionCode,
-                        style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.primary
-                    )
-                    Spacer(modifier = Modifier.height(16.dp))
-                }
-
-                Button(
-                    onClick = {
-                        /* TODO: session code functionality */
-                        sessionCode = viewModel.getSessionCode()
-                    },
-                    modifier = Modifier.width(220.dp)
-                ) {
-                    Text(stringResource(io.cobrowse.sample.core.R.string.button_get_session_code))
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                OutlinedButton(
-                    onClick = { /* TODO: Agent present mode functionality */ },
-                    modifier = Modifier.width(220.dp)
-                ) {
-                    Text(stringResource(io.cobrowse.sample.core.R.string.button_agent_present))
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                TextButton(
-                    onClick = {
-                        viewModel.logout()
-                        onLogout()
-                    },
-                    modifier = Modifier.width(220.dp)
-                ) {
-                    Text(stringResource( io.cobrowse.sample.core.R.string.log_out))
-                }
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                val policy = stringResource(io.cobrowse.sample.core.R.string.privacy_policy_url)
-                TextButton(
-                    onClick = {
-                        val intent = Intent(Intent.ACTION_VIEW, Uri.parse(policy))
-                        context.startActivity(intent)
-                    },
-                    modifier = Modifier.width(220.dp)
-                ) {
-                    Text(stringResource(io.cobrowse.sample.core.R.string.privacy_policy))
-                }
+            TextButton(
+                onClick = { context.openPrivacyPolicy() },
+                modifier = Modifier.width(220.dp)
+            ) {
+                Text(stringResource(R.string.privacy_policy))
             }
         }
     }
 }
-

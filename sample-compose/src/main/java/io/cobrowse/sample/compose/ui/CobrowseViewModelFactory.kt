@@ -7,6 +7,7 @@ import io.cobrowse.sample.data.LoginRepository
 import io.cobrowse.sample.data.TransactionsDataSource
 import io.cobrowse.sample.data.TransactionsRepository
 import io.cobrowse.sample.compose.ui.account.AccountViewModel
+import io.cobrowse.sample.compose.ui.account.AgentPresentViewModel
 import io.cobrowse.sample.compose.ui.login.LoginViewModel
 import io.cobrowse.sample.compose.ui.transactions.TransactionsChartViewModel
 import io.cobrowse.sample.compose.ui.transactions.TransactionsViewModel
@@ -28,6 +29,9 @@ class CobrowseViewModelFactory : ViewModelProvider.Factory {
         }
         if (modelClass.isAssignableFrom(AccountViewModel::class.java)) {
             return AccountViewModel(loginRepository) as T
+        }
+        if (modelClass.isAssignableFrom(AgentPresentViewModel::class.java)) {
+            return AgentPresentViewModel() as T
         }
         if (modelClass.isAssignableFrom(TransactionsViewModel::class.java)) {
             return TransactionsViewModel(transactionsRepository) as T
