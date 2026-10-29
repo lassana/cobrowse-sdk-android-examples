@@ -1,20 +1,16 @@
 apply plugin: 'com.android.application'
-apply plugin: 'org.jetbrains.kotlin.android'
 apply plugin: 'org.jetbrains.kotlin.plugin.compose'
 
 android {
     namespace 'io.cobrowse.sample.compose'
-    compileSdkVersion 34
+    compileSdk 37
 
     defaultConfig {
         applicationId "io.cobrowse.demo.compose"
-        minSdk 21
-        targetSdkVersion 34
+        minSdk 24
+        targetSdk 37
         versionCode 1
         versionName "1.0"
-
-        resourceConfigurations += ["en", "en-rGB"]
-        resConfigs "en"
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
 
@@ -31,11 +27,11 @@ android {
     }
     compileOptions {
         coreLibraryDesugaringEnabled = true
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
-    kotlinOptions {
-        jvmTarget = '1.8'
+    androidResources {
+        localeFilters += ["en", "en-rGB"]
     }
     buildFeatures {
         compose true
@@ -48,10 +44,10 @@ android {
 }
 
 dependencies {
-    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.0.3'
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:2.1.5'
 
     implementation(project(':sample-core'))
-    implementation 'io.cobrowse:cobrowse-sdk-android:3.13.4'
+    implementation 'io.cobrowse:cobrowse-sdk-android:3.19.1'
 
     implementation 'androidx.core:core-ktx:1.12.0'
     implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.1'

@@ -33,6 +33,11 @@
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel_id"
             android:value="@string/default_notification_channel_id" />
+        <!-- Register for FCM by the Firebase installation ID (FID) instead of the deprecated
+             registration token -->
+        <meta-data
+            android:name="firebase_messaging_installation_id_enabled"
+            android:value="true" />
         <service
             android:name="io.cobrowse.CobrowseAccessibilityService"
             android:permission="android.permission.BIND_ACCESSIBILITY_SERVICE"
