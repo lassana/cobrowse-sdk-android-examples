@@ -2,6 +2,7 @@ package io.cobrowse.sample.compose.ui.transactions
 
 import androidx.compose.foundation.LocalOverscrollFactory
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -12,7 +13,6 @@ import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -42,10 +42,13 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.cobrowse.cobrowseRedacted
 import io.cobrowse.sample.compose.ui.CobrowseViewModelFactory
+import io.cobrowse.sample.compose.ui.theme.TertiaryTextColor
+import io.cobrowse.sample.compose.ui.theme.viewTextStyle
 import io.cobrowse.sample.data.model.Transaction
 import io.cobrowse.sample.data.model.subtitle
 import io.cobrowse.sample.data.model.transactionGroupHeader
@@ -113,21 +116,23 @@ fun TransactionsList(
                 .nestedScroll(consumeOverscrollConnection),
             contentPadding = PaddingValues(
                 start = navigationBars.calculateStartPadding(layoutDirection),
-                top = 8.dp,
                 end = navigationBars.calculateEndPadding(layoutDirection),
-                bottom = 8.dp + navigationBars.calculateBottomPadding()
+                bottom = navigationBars.calculateBottomPadding()
             )
         ) {
             groupedTransactions.forEach { (month, transactionsInMonth) ->
                 stickyHeader {
                     Surface(modifier = Modifier.fillMaxWidth()) {
-                        Text(
-                            text = month.transactionGroupHeader(),
-                            style = MaterialTheme.typography.titleMedium,
-                            fontWeight = FontWeight.Bold,
-                            color = MaterialTheme.colorScheme.onSurfaceVariant,
-                            modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
-                        )
+                        Box {
+                            Text(
+                                text = month.transactionGroupHeader(),
+                                style = viewTextStyle(16.sp),
+                                fontWeight = FontWeight.Bold,
+                                color = TertiaryTextColor,
+                                modifier = Modifier.padding(start = 32.dp, top = 16.dp, end = 32.dp, bottom = 16.dp)
+                            )
+                            ListDivider(modifier = Modifier.align(Alignment.BottomCenter))
+                        }
                     }
                 }
 
@@ -149,52 +154,66 @@ fun TransactionItem(
 ) {
     val context = LocalContext.current
 
-    Column(
+    Box(
         modifier = Modifier
             .fillMaxWidth()
             .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp)
     ) {
-        HorizontalDivider(color = MaterialTheme.colorScheme.outlineVariant)
-
+        // Like in the View-based sample: 16sp regular name and date next to a 48dp icon
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(horizontal = 32.dp, vertical = 16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
                 painter = painterResource(transaction.category.icon),
                 contentDescription = transaction.category.title,
                 tint = Color(transaction.category.color),
-                modifier = Modifier.size(40.dp)
+                modifier = Modifier
+                    .align(Alignment.Top)
+                    .size(48.dp)
             )
 
             Spacer(modifier = Modifier.width(16.dp))
 
-            Column(modifier = Modifier.weight(1f)) {
+            Column(
+                modifier = Modifier
+                    .align(Alignment.Top)
+                    .weight(1f)
+            ) {
                 Text(
                     text = transaction.title,
-                    style = MaterialTheme.typography.bodyLarge,
-                    fontWeight = FontWeight.Medium,
+                    style = viewTextStyle(16.sp),
                     modifier = Modifier.cobrowseRedacted()
                 )
-                Spacer(modifier = Modifier.height(4.dp))
                 Text(
                     text = transaction.subtitle(context),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = viewTextStyle(16.sp),
                     modifier = Modifier.cobrowseRedacted()
                 )
             }
 
             Text(
                 text = stringResource(io.cobrowse.sample.core.R.string.transaction_amount, transaction.amount),
-                style = MaterialTheme.typography.bodyLarge,
-                fontWeight = FontWeight.Bold,
+                style = viewTextStyle(14.sp),
                 color = MaterialTheme.colorScheme.primary,
+                maxLines = 1,
                 modifier = Modifier.cobrowseRedacted()
             )
         }
+
+        ListDivider(modifier = Modifier.align(Alignment.BottomCenter))
     }
+}
+
+/**
+ * The divider drawn over the bottom of the list's headers and cells.
+ */
+@Composable
+private fun ListDivider(modifier: Modifier = Modifier) {
+    HorizontalDivider(
+        color = MaterialTheme.colorScheme.outlineVariant,
+        modifier = modifier.padding(horizontal = 16.dp)
+    )
 }
