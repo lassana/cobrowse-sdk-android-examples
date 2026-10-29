@@ -11,6 +11,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ListItem
+import androidx.compose.material3.ListItemDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
@@ -22,6 +23,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -57,6 +59,8 @@ fun SettingsScreen(onBack: () -> Unit) {
                 .verticalScroll(rememberScrollState())
         ) {
             val redactionByDefault = RedactionByDefault.isEnabled
+            // The items have no background of their own, like preferences
+            val itemColors = ListItemDefaults.colors(containerColor = Color.Transparent)
             ListItem(
                 leadingContent = {
                     Icon(painterResource(R.drawable.ic_eye), contentDescription = null)
@@ -74,6 +78,7 @@ fun SettingsScreen(onBack: () -> Unit) {
                         onCheckedChange = { RedactionByDefault.set(context, it) }
                     )
                 },
+                colors = itemColors,
                 modifier = Modifier.clickable {
                     RedactionByDefault.set(context, !redactionByDefault)
                 }
@@ -86,6 +91,7 @@ fun SettingsScreen(onBack: () -> Unit) {
                 supportingContent = {
                     Text(stringResource(R.string.button_activate_accessibility_service_description))
                 },
+                colors = itemColors,
                 modifier = Modifier.clickable {
                     if (CobrowseAccessibilityService.isRunning()) {
                         openAccessibilitySettings()

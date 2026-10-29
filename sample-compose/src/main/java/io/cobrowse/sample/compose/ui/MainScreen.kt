@@ -109,6 +109,7 @@ fun MainScreen(
         BottomSheetScaffold(
             scaffoldState = scaffoldState,
             sheetPeekHeight = maxHeight * 0.4f,
+            containerColor = MaterialTheme.colorScheme.background,
             sheetContainerColor = MaterialTheme.colorScheme.surface,
             sheetContent = {
                 AnimatedContent(
