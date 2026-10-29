@@ -24,6 +24,13 @@ object CobrowseSessionDelegate : CobrowseIO.Delegate, CobrowseIO.RedactionDelega
      */
     var consentPrompt: (request: ConsentRequest, activity: Activity?) -> Unit = { _, _ -> }
 
+    /**
+     * Hides the whole activity window from the agent when redaction by default is enabled.
+     * Compose UI turns it off and redacts its root composable instead, which lets it unredact
+     * parts of the screen.
+     */
+    var redactWindowByDefault = true
+
     override fun sessionDidUpdate(session: Session) {
         _current.value = session
     }
@@ -47,7 +54,7 @@ object CobrowseSessionDelegate : CobrowseIO.Delegate, CobrowseIO.RedactionDelega
     }
 
     override fun redactedViews(activity: Activity): MutableList<View> {
-        return if (isRedactionByDefaultEnabled(activity))
+        return if (redactWindowByDefault && isRedactionByDefaultEnabled(activity))
             mutableListOf(activity.window.decorView)
             else mutableListOf()
     }
@@ -56,9 +63,22 @@ object CobrowseSessionDelegate : CobrowseIO.Delegate, CobrowseIO.RedactionDelega
      * Returns a value indicating whether UI components should be redacted by default or not.
      */
     fun isRedactionByDefaultEnabled(context: Context)
-        = context
-            .getSharedPreferences("${context.packageName}_preferences", Context.MODE_PRIVATE)
-            .getBoolean("isRedactionByDefaultEnabled", false)
+        = context.preferences.getBoolean(KEY_REDACTION_BY_DEFAULT, false)
+
+    /**
+     * Sets whether UI components should be redacted by default or not.
+     */
+    fun setRedactionByDefaultEnabled(context: Context, enabled: Boolean) {
+        context.preferences.edit().putBoolean(KEY_REDACTION_BY_DEFAULT, enabled).apply()
+    }
+
+    private const val KEY_REDACTION_BY_DEFAULT = "isRedactionByDefaultEnabled"
+
+    /**
+     * The default shared preferences, the same that AndroidX Preference uses.
+     */
+    private val Context.preferences
+        get() = getSharedPreferences("${packageName}_preferences", Context.MODE_PRIVATE)
 
     /**
      * Helper function to get the delegate object in a more obvious way.
