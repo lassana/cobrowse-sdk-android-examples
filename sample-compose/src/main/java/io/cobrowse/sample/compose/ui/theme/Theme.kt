@@ -5,6 +5,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 
 private val LightColorScheme = lightColorScheme(
     primary = PrimaryColor,
@@ -17,6 +18,8 @@ private val LightColorScheme = lightColorScheme(
     onTertiary = SecondaryTextColor,
     onBackground = PrimaryTextColor,
     onSurface = PrimaryTextColor,
+    // The secondary text color of the View-based sample's theme
+    onSurfaceVariant = Color(0x8A000000),
 )
 
 private val DarkColorScheme = darkColorScheme(
@@ -30,6 +33,7 @@ private val DarkColorScheme = darkColorScheme(
     onTertiary = SecondaryTextColor,
     onBackground = SecondaryTextColor,
     onSurface = SecondaryTextColor,
+    onSurfaceVariant = Color(0xB3FFFFFF),
 )
 
 @Composable

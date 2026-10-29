@@ -49,6 +49,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import io.cobrowse.sample.compose.ui.CobrowseViewModelFactory
 import io.cobrowse.sample.compose.ui.EndSessionAction
 import io.cobrowse.sample.compose.ui.SampleTopAppBar
+import io.cobrowse.sample.compose.ui.theme.PrimaryDarkColor
 import io.cobrowse.sample.compose.ui.rememberCobrowseSession
 import io.cobrowse.sample.core.R
 
@@ -112,6 +113,7 @@ fun AgentPresentScreen(
             SampleTopAppBar(
                 title = stringResource(R.string.fragment_agent_present_title),
                 onBack = onBack,
+                statusBarColor = PrimaryDarkColor,
                 actions = { EndSessionAction() }
             )
         }
@@ -168,7 +170,7 @@ fun AgentPresentScreen(
                                     modifier = Modifier.width(48.dp)
                                 )
                             },
-                            shape = RoundedCornerShape(5.dp),
+                            shape = RoundedCornerShape(4.dp),
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
                             modifier = Modifier
                                 .width(48.dp)

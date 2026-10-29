@@ -1,9 +1,11 @@
 package io.cobrowse.sample.compose.ui.theme
 
 import androidx.compose.material3.Typography
+import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.sp
 
 val Typography = Typography(
@@ -30,3 +32,13 @@ val Typography = Typography(
     )
 )
 
+
+/**
+ * A text style that lays out like a `TextView` of the View-based sample: the line height comes
+ * from the font, and the font padding is included.
+ */
+fun viewTextStyle(fontSize: TextUnit) = TextStyle(
+    fontSize = fontSize,
+    lineHeight = TextUnit.Unspecified,
+    platformStyle = PlatformTextStyle(includeFontPadding = true)
+)

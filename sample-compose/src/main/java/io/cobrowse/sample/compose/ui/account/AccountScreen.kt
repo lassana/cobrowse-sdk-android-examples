@@ -1,23 +1,18 @@
 package io.cobrowse.sample.compose.ui.account
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -27,17 +22,21 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.cobrowse.cobrowseRedacted
 import io.cobrowse.sample.compose.ui.CobrowseViewModelFactory
 import io.cobrowse.sample.compose.ui.EndSessionAction
+import io.cobrowse.sample.compose.ui.SampleButton
+import io.cobrowse.sample.compose.ui.SampleTextButton
 import io.cobrowse.sample.compose.ui.SampleTopAppBar
 import io.cobrowse.sample.compose.ui.openPrivacyPolicy
 import io.cobrowse.sample.compose.ui.rememberCobrowseSession
 import io.cobrowse.sample.compose.ui.theme.AccentLightColor
+import io.cobrowse.sample.compose.ui.theme.PrimaryDarkColor
+import io.cobrowse.sample.compose.ui.theme.viewTextStyle
 import io.cobrowse.sample.core.R
 
 /**
@@ -68,6 +67,7 @@ fun AccountScreen(
             SampleTopAppBar(
                 title = stringResource(R.string.fragment_account_title),
                 onBack = onBack,
+                statusBarColor = PrimaryDarkColor,
                 actions = {
                     EndSessionAction()
                     IconButton(onClick = onSettings) {
@@ -82,13 +82,14 @@ fun AccountScreen(
     ) { paddingValues ->
         Column(
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
-                .verticalScroll(rememberScrollState())
-                .padding(16.dp)
         ) {
+            // Like in the View-based sample: the logo is 92dp below the status bar,
+            // and the 56dp app bar covers the top of that space
+            Spacer(modifier = Modifier.height(36.dp))
+
             Image(
                 painter = painterResource(R.drawable.logo_account),
                 contentDescription = null
@@ -96,32 +97,33 @@ fun AccountScreen(
 
             Text(
                 text = viewModel.user?.displayName.orEmpty(),
-                style = MaterialTheme.typography.titleLarge,
-                textAlign = TextAlign.Center,
+                style = viewTextStyle(22.sp),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 1,
                 modifier = Modifier.cobrowseRedacted()
             )
 
             Text(
                 text = viewModel.user?.email.orEmpty(),
-                style = MaterialTheme.typography.bodyMedium,
-                textAlign = TextAlign.Center,
+                style = viewTextStyle(14.sp),
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 1,
                 modifier = Modifier.cobrowseRedacted()
             )
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.weight(1f))
 
             Text(
                 text = sessionCode,
-                style = MaterialTheme.typography.titleLarge,
+                style = viewTextStyle(22.sp),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                maxLines = 1,
                 modifier = Modifier.alpha(if (sessionCode.isEmpty()) 0f else 1f)
             )
 
-            Spacer(modifier = Modifier.height(8.dp))
-
             // Keep the buttons' space while hidden, so the screen doesn't jump
             val sessionButtonsAlpha = if (isSessionActive) 0f else 1f
-            Button(
+            SampleButton(
                 onClick = { viewModel.requestSessionCode() },
                 enabled = !isSessionActive,
                 modifier = Modifier
@@ -131,7 +133,7 @@ fun AccountScreen(
                 Text(stringResource(R.string.button_get_session_code))
             }
 
-            Button(
+            SampleButton(
                 onClick = onAgentPresent,
                 enabled = !isSessionActive,
                 colors = ButtonDefaults.buttonColors(
@@ -145,22 +147,20 @@ fun AccountScreen(
                 Text(stringResource(R.string.button_agent_present))
             }
 
-            TextButton(
+            SampleTextButton(
+                text = stringResource(R.string.log_out),
                 onClick = {
                     viewModel.logout()
                     onLogout()
                 },
                 modifier = Modifier.width(220.dp)
-            ) {
-                Text(stringResource(R.string.log_out))
-            }
+            )
 
-            TextButton(
+            SampleTextButton(
+                text = stringResource(R.string.privacy_policy),
                 onClick = { context.openPrivacyPolicy() },
                 modifier = Modifier.width(220.dp)
-            ) {
-                Text(stringResource(R.string.privacy_policy))
-            }
+            )
         }
     }
 }

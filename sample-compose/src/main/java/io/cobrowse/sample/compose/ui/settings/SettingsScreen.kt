@@ -30,6 +30,7 @@ import androidx.compose.ui.res.stringResource
 import io.cobrowse.CobrowseAccessibilityService
 import io.cobrowse.sample.compose.ui.RedactionByDefault
 import io.cobrowse.sample.compose.ui.SampleTopAppBar
+import io.cobrowse.sample.compose.ui.theme.PrimaryDarkColor
 import io.cobrowse.sample.core.R
 
 /**
@@ -48,7 +49,8 @@ fun SettingsScreen(onBack: () -> Unit) {
         topBar = {
             SampleTopAppBar(
                 title = stringResource(R.string.settings_category_cobrowse),
-                onBack = onBack
+                onBack = onBack,
+                statusBarColor = PrimaryDarkColor
             )
         }
     ) { paddingValues ->

@@ -14,34 +14,42 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
-import androidx.compose.foundation.IndicationNodeFactory
-import androidx.compose.foundation.LocalIndication
-import androidx.compose.foundation.gestures.awaitEachGesture
-import androidx.compose.foundation.gestures.awaitFirstDown
-import androidx.compose.foundation.gestures.waitForUpOrCancellation
-import androidx.compose.foundation.interaction.InteractionSource
+import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.interaction.collectIsPressedAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.WindowInsetsSides
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.only
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawing
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.windowInsetsPadding
+import androidx.compose.foundation.layout.windowInsetsTopHeight
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.BottomSheetDefaults
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.BottomSheetScaffold
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.SheetState
 import androidx.compose.material3.SheetValue
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.material3.rememberBottomSheetScaffoldState
 import androidx.compose.material3.rememberStandardBottomSheetState
 import androidx.compose.runtime.Composable
@@ -54,13 +62,14 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.pointer.pointerInput
-import androidx.compose.ui.node.DelegatableNode
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import io.cobrowse.sample.compose.ui.theme.PrimaryDarkColor
 import io.cobrowse.sample.compose.ui.transactions.TransactionWebView
 import io.cobrowse.sample.compose.ui.transactions.TransactionsChartScreen
 import io.cobrowse.sample.compose.ui.transactions.TransactionsScreen
@@ -92,8 +101,9 @@ fun MainScreen(
             skipHiddenState = true
         )
     )
+    val sheetState = scaffoldState.bottomSheetState
     val scope = rememberCoroutineScope()
-    val isSheetExpanded = scaffoldState.bottomSheetState.currentValue == SheetValue.Expanded
+    val isSheetExpanded = sheetState.currentValue == SheetValue.Expanded
 
     // The pages opened in the bottom sheet, the last one is displayed
     var sheetPages by remember {
@@ -104,31 +114,36 @@ fun MainScreen(
         if (sheetPages.size > 1) {
             sheetPages = sheetPages.dropLast(1)
         } else {
-            scope.launch { scaffoldState.bottomSheetState.partialExpand() }
+            scope.launch { sheetState.partialExpand() }
         }
     }
 
     RequestNotificationPermission()
 
-    BoxWithConstraints(
-        modifier = Modifier
-            .fillMaxSize()
-            .windowInsetsPadding(
-                WindowInsets.safeDrawing.only(WindowInsetsSides.Top + WindowInsetsSides.Horizontal)
+    // Like in the View-based sample, the sheet peeks at 40% of the screen height
+    BoxWithConstraints(modifier = Modifier.fillMaxSize()) {
+        val sheetPeekHeight = maxHeight * 0.4f
+        Column(modifier = Modifier.fillMaxSize()) {
+            Spacer(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(PrimaryDarkColor)
+                    .windowInsetsTopHeight(WindowInsets.safeDrawing)
             )
-    ) {
-        // The scaffold makes the drag handle clickable, with a ripple clipped to the handle.
-        // The handle highlights itself instead, everything else keeps the ripple.
-        val ripple = LocalIndication.current
-        CompositionLocalProvider(LocalIndication provides NoIndication) {
-            BottomSheetScaffold(
-                scaffoldState = scaffoldState,
-                sheetPeekHeight = maxHeight * 0.4f,
-                containerColor = MaterialTheme.colorScheme.background,
-                sheetContainerColor = MaterialTheme.colorScheme.surface,
-                sheetDragHandle = { SheetDragHandle() },
-                sheetContent = {
-                    CompositionLocalProvider(LocalIndication provides ripple) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .windowInsetsPadding(WindowInsets.safeDrawing.only(WindowInsetsSides.Horizontal))
+            ) {
+                BottomSheetScaffold(
+                    scaffoldState = scaffoldState,
+                    sheetPeekHeight = sheetPeekHeight,
+                    sheetShape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp),
+                    containerColor = MaterialTheme.colorScheme.background,
+                    sheetContainerColor = MaterialTheme.colorScheme.surface,
+                    // The sheet header has its own drag handle
+                    sheetDragHandle = null,
+                    sheetContent = {
                         AnimatedContent(
                             targetState = sheetPages,
                             transitionSpec = {
@@ -144,9 +159,9 @@ fun MainScreen(
                             Column(modifier = Modifier.fillMaxSize()) {
                                 when (val page = pages.last()) {
                                     is SheetDestination.Transactions -> {
-                                        SheetTopBar(
+                                        SheetHeader(
                                             title = stringResource(R.string.fragment_transaction),
-                                            isSheetExpanded = isSheetExpanded
+                                            sheetState = sheetState
                                         )
                                         TransactionsScreen(
                                             viewModelFactory = viewModelFactory,
@@ -160,9 +175,9 @@ fun MainScreen(
                                         )
                                     }
                                     is SheetDestination.TransactionDetail -> {
-                                        SheetTopBar(
+                                        SheetHeader(
                                             title = stringResource(R.string.fragment_transaction_webview),
-                                            isSheetExpanded = isSheetExpanded,
+                                            sheetState = sheetState,
                                             onBack = { sheetPages = sheetPages.dropLast(1) }
                                         )
                                         TransactionWebView(
@@ -181,9 +196,7 @@ fun MainScreen(
                             }
                         }
                     }
-                }
-            ) { innerPadding ->
-                CompositionLocalProvider(LocalIndication provides ripple) {
+                ) { innerPadding ->
                     Box(
                         modifier = Modifier
                             .fillMaxSize()
@@ -220,59 +233,93 @@ fun MainScreen(
 }
 
 /**
- * The drag handle of the bottom sheet, which darkens while pressed.
+ * The 56dp header of the bottom sheet, like the toolbar of the View-based sample, with the drag
+ * handle on top of it. The sheet covers the screen's own actions when expanded, so it shows
+ * them instead.
  */
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-private fun SheetDragHandle() {
-    var isPressed by remember { mutableStateOf(false) }
-    val color by animateColorAsState(
-        targetValue = if (isPressed) MaterialTheme.colorScheme.onSurface
-            else MaterialTheme.colorScheme.onSurfaceVariant,
-        label = "drag_handle_color"
-    )
-    BottomSheetDefaults.DragHandle(
-        color = color,
-        modifier = Modifier.pointerInput(Unit) {
-            // Only observes the touches, the bottom sheet handles them
-            awaitEachGesture {
-                awaitFirstDown(requireUnconsumed = false)
-                isPressed = true
-                waitForUpOrCancellation()
-                isPressed = false
-            }
-        }
-    )
-}
-
-/**
- * An indication that draws nothing.
- */
-private object NoIndication : IndicationNodeFactory {
-    override fun create(interactionSource: InteractionSource): DelegatableNode =
-        object : Modifier.Node() {}
-
-    override fun equals(other: Any?): Boolean = other === this
-
-    override fun hashCode(): Int = System.identityHashCode(this)
-}
-
-/**
- * The app bar of the bottom sheet. The sheet covers the screen's own actions when expanded,
- * so it shows them instead.
- */
-@Composable
-private fun SheetTopBar(
+private fun SheetHeader(
     title: String,
-    isSheetExpanded: Boolean,
+    sheetState: SheetState,
     onBack: (() -> Unit)? = null
 ) {
-    SampleTopAppBar(
-        title = title,
-        onBack = onBack,
-        windowInsets = WindowInsets(0),
-        actions = { if (isSheetExpanded) EndSessionAction() }
+    val scope = rememberCoroutineScope()
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(56.dp)
+    ) {
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = if (onBack == null) 16.dp else 0.dp)
+        ) {
+            if (onBack != null) {
+                IconButton(onClick = onBack, modifier = Modifier.size(56.dp)) {
+                    Icon(
+                        Icons.AutoMirrored.Filled.ArrowBack,
+                        contentDescription = stringResource(io.cobrowse.sample.compose.R.string.icon_back),
+                        tint = MaterialTheme.colorScheme.onSurfaceVariant
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.width(16.dp))
+            Text(
+                text = title,
+                style = TopAppBarTitleStyle,
+                color = MaterialTheme.colorScheme.onSurface,
+                modifier = Modifier.weight(1f)
+            )
+            if (sheetState.currentValue == SheetValue.Expanded) {
+                CompositionLocalProvider(LocalContentColor provides MaterialTheme.colorScheme.primary) {
+                    EndSessionAction()
+                }
+            }
+        }
+        SheetDragHandle(
+            onClick = {
+                scope.launch {
+                    if (sheetState.currentValue == SheetValue.Expanded) {
+                        sheetState.partialExpand()
+                    } else {
+                        sheetState.expand()
+                    }
+                }
+            },
+            modifier = Modifier.align(Alignment.TopCenter)
+        )
+    }
+}
+
+/**
+ * The drag handle of the bottom sheet, which expands or collapses the sheet when clicked
+ * and darkens while pressed.
+ */
+@Composable
+private fun SheetDragHandle(onClick: () -> Unit, modifier: Modifier = Modifier) {
+    val interactionSource = remember { MutableInteractionSource() }
+    val isPressed by interactionSource.collectIsPressedAsState()
+    val color by animateColorAsState(
+        targetValue = MaterialTheme.colorScheme.onSurface.copy(alpha = if (isPressed) 0.6f else 0.3f),
+        label = "drag_handle_color"
     )
+    val description = stringResource(io.cobrowse.sample.compose.R.string.drag_handle)
+    Box(
+        contentAlignment = Alignment.TopCenter,
+        modifier = modifier
+            .size(48.dp)
+            .clickable(interactionSource = interactionSource, indication = null, onClick = onClick)
+            .semantics { contentDescription = description }
+    ) {
+        Box(
+            modifier = Modifier
+                .padding(top = 12.dp)
+                .size(width = 32.dp, height = 4.dp)
+                .background(color, RoundedCornerShape(2.dp))
+        )
+    }
 }
 
 /**

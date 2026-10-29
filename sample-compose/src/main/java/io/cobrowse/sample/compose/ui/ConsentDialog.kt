@@ -96,7 +96,7 @@ fun ConsentDialog() {
                     color = textColor,
                     fontSize = 16.sp,
                     lineHeight = 21.sp,
-                    modifier = Modifier.padding(top = 7.dp)
+                    modifier = Modifier.padding(top = 8.dp)
                 )
                 Text(
                     text = stringResource(request.terms),
@@ -126,7 +126,7 @@ fun ConsentDialog() {
                 }
                 Button(
                     onClick = { answer(allowed = true) },
-                    shape = RoundedCornerShape(9.dp),
+                    shape = RoundedCornerShape(8.dp),
                     modifier = Modifier
                         .weight(1f)
                         .height(44.dp)
