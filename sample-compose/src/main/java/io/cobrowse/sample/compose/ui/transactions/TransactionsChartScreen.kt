@@ -72,11 +72,8 @@ fun TransactionsChartScreen(
             )
             Text(
                 text = stringResource(io.cobrowse.sample.core.R.string.transaction_amount, uiState.balance),
-                style = MaterialTheme.typography.headlineLarge.copy(
-                    fontSize = 32.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = MaterialTheme.colorScheme.primary
-                ),
+                style = MaterialTheme.typography.headlineLarge,
+                color = MaterialTheme.colorScheme.primary,
                 modifier = Modifier
                     .padding(vertical = 8.dp)
                     .cobrowseRedacted()

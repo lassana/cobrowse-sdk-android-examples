@@ -9,13 +9,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.MaterialTheme
@@ -39,17 +39,14 @@ import androidx.compose.ui.input.key.onPreviewKeyEvent
 import androidx.compose.ui.input.key.type
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import io.cobrowse.sample.compose.ui.CobrowseViewModelFactory
 import io.cobrowse.sample.compose.ui.EndSessionAction
 import io.cobrowse.sample.compose.ui.SampleTopAppBar
-import io.cobrowse.sample.compose.ui.theme.PrimaryDarkColor
 import io.cobrowse.sample.compose.ui.rememberCobrowseSession
 import io.cobrowse.sample.core.R
 
@@ -113,7 +110,6 @@ fun AgentPresentScreen(
             SampleTopAppBar(
                 title = stringResource(R.string.fragment_agent_present_title),
                 onBack = onBack,
-                statusBarColor = PrimaryDarkColor,
                 actions = { EndSessionAction() }
             )
         }
@@ -128,7 +124,7 @@ fun AgentPresentScreen(
                 .verticalScroll(rememberScrollState())
                 .padding(16.dp)
         ) {
-            Spacer(modifier = Modifier.height(76.dp))
+            Spacer(modifier = Modifier.height(64.dp))
 
             if (isPresenting) {
                 Image(
@@ -142,7 +138,7 @@ fun AgentPresentScreen(
                     if (isPresenting) R.string.agent_present_welcome_you_are_presenting
                     else R.string.agent_present_welcome
                 ),
-                fontSize = 22.sp,
+                style = MaterialTheme.typography.headlineSmall,
                 textAlign = TextAlign.Center,
                 maxLines = 1
             )
@@ -161,16 +157,14 @@ fun AgentPresentScreen(
                             // Not disabled, so the boxes keep the focus while the code is checked
                             readOnly = isSubmitting,
                             singleLine = true,
-                            textStyle = TextStyle(textAlign = TextAlign.Center, fontSize = 20.sp),
+                            textStyle = MaterialTheme.typography.titleLarge.copy(textAlign = TextAlign.Center),
                             placeholder = {
                                 Text(
                                     text = "${index + 1}",
                                     textAlign = TextAlign.Center,
-                                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                    modifier = Modifier.width(48.dp)
+                                    modifier = Modifier.fillMaxWidth()
                                 )
                             },
-                            shape = RoundedCornerShape(4.dp),
                             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.NumberPassword),
                             modifier = Modifier
                                 .width(48.dp)
